@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}FOODGRAM{% endblock %}</title>
+    {% load static %}
+    {% csrf_token %}
+    <link rel="shortcut icon" type="image/png" href="{% static "favicon.ico" %}">
+    <link rel="stylesheet" href="/static/pages/index.css">
+</head>
+<body class="body">
+    {% block head %}
+    {% endblock %}
+    <main class="main container">
+        {% block content %}
+        {% endblock %}
+      </main> 
+    {% include 'includes/footer.html' %}
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
