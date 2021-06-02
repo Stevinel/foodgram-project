@@ -10,7 +10,6 @@ class RecipeAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     empty_value_display = "-пусто-"
 
-
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("pk", "title", "quantity", "measure")

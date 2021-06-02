@@ -1,0 +1,11 @@
+{% extends "base.html" %}  
+{% block title %} {{ flatpage.title }} {% endblock %} 
+{% block content %} 
+{% include "includes/header.html" %}
+
+<main class="main container">
+        <h1>{{ flatpage.title }}</h1> 
+        {{ flatpage.content }} 
+</main>
+ 
+{% endblock %}  

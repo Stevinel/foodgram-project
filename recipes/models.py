@@ -20,6 +20,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField("Ingredient")
     tag = models.ManyToManyField("Tag")
     cooking_time = models.PositiveIntegerField("Время приготовления в минутах", validators=[validate_not_zero])
+    description = models.TextField(null=True)
     slug = models.SlugField("Адрес",
         max_length=256,
         unique=True,
@@ -48,6 +49,9 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     title = models.CharField("Тэг", max_length=15)
+    
+    def __str__(self):
+        return self.title
 
 
 class Favorite(models.Model):
