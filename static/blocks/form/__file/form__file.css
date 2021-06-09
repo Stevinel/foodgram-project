@@ -1,6 +1,17 @@
-.form__file {
-
+.form__hidden {
+    visibility: hidden;
+    opacity: 0;
+    z-index: -1;
+    pointer-events: none;
+    position: absolute;
 }
-.form__file[type='file'] {
-    display: none;
+
+.form__fileitem {
+    align-self: center;
+    padding-left: 16px;
+}
+
+.form__fileitem img {
+    margin-top: 4px;
+    width: 24px;
 }

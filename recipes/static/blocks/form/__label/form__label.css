@@ -9,3 +9,12 @@
     padding: 0;
     margin: 0;
 }
+
+.form__filename {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    color: #4A61DD;
+}

@@ -98,6 +98,10 @@ const cbEventInput = (elem) => {
 
 const eventInput = debouncing(cbEventInput, 1000);
 
+document.querySelector('.form__file').onchange = function() {
+    document.querySelector('.form__filename').textContent = this.files[0].name;
+}
+
 // вешаем апи
 nameIngredient.addEventListener('input', eventInput);
 const ingredients = Ingredients();

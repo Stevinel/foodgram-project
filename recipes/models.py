@@ -1,7 +1,13 @@
 from django.db import models
 from users.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+import random
+import string
 
+def random_slug(size=20, chars=string.ascii_uppercase + string.digits):
+    """Generation slug code"""
+    return "".join(random.choice(chars) for _ in range(size))
 
 
 def validate_not_zero(value):
@@ -17,13 +23,18 @@ class Recipe(models.Model):
     image = models.ImageField("Фотография",
         upload_to="recipes/",
     )
-    ingredients = models.ManyToManyField("Ingredient")
+    ingredient = models.ManyToManyField(
+        'Ingredient',
+        through='IngredientItem',
+        through_fields=('recipe', 'ingredient'),
+        verbose_name='Ингредиенты',
+    )
     tag = models.ManyToManyField("Tag")
     cooking_time = models.PositiveIntegerField("Время приготовления в минутах", validators=[validate_not_zero])
     description = models.TextField(null=True)
     slug = models.SlugField("Адрес",
-        max_length=256,
-        unique=True,
+        max_length=200,
+        unique=True, default=random_slug
     )
 
     class Meta:
@@ -36,9 +47,8 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
-    title = models.CharField("Название ингредиента",max_length=50)
-    quantity = models.PositiveIntegerField("Количество")
-    measure = models.CharField("Единица измерения",max_length=10)
+    title = models.CharField("Название ингредиента", max_length=50)
+    dimension = models.CharField("Единица измерения", max_length=10)
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -48,8 +58,10 @@ class Ingredient(models.Model):
         return self.title
 
 class Tag(models.Model):
-    title = models.CharField("Тэг", max_length=15)
-    
+    title = models.CharField(max_length=15, db_index=True)
+    value = models.CharField(max_length=20, null=True)
+    color = models.CharField(max_length=20, null=True)
+
     def __str__(self):
         return self.title
 
@@ -80,6 +92,21 @@ class Favorite(models.Model):
         ]
     def __str__(self):
         return f"user: {self.user.username}, recipe:{self.recipe.title}"
+
+
+class IngredientItem(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredients',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredients',
+        verbose_name='Ингридиент',
+    )
+    quantity = models.PositiveSmallIntegerField(validators=(MinValueValidator(1),))
 
 class ShoppingList(models.Model):
     user = models.ForeignKey(
