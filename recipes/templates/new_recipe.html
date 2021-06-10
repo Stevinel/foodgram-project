@@ -10,7 +10,7 @@
 {% include "includes/header.html" with new_recipe=True %}
 
 <div class="main__header">
-    <h1 class="main__title">{% if request.resolver_match.url_name == 'new_recipe' %}Создание{% else %}Редактирование{% endif %} рецепта</h1>
+    <h1 class="main__title">{% if is_new_recipe %}Создание{% else %}Редактирование{% endif %} рецепта</h1>
 </div>
 <div class="form-container">
     <form class="form" method="post" enctype="multipart/form-data">
@@ -52,7 +52,7 @@
                     <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                 </div>
                 <div class="form__field-group-ingredientes-container">
-                {% for ingredient in valid_ingredients %}
+                {% for ingredient in ingredients %}
                     <div class="form__field-item-ingredient" id="ing_{{ ingredient.id }}">
                         <span> {{ ingredient.title }} {{ ingredient.amount }}{{ ingredient.units }}.</span>
                         <span class="form__field-item-delete"></span>
@@ -94,12 +94,12 @@
                     <label for="{{ form.image.id_for_label }}" class="form__file-button">Выбрать файл</label>
 
                     <div class="form__fileitem">{{ image_name }}</div>
-
+<!-- 
                     <div class="form__fileitem">
                         <a href="#">
                             <img src="/static/admin/img/icon-deletelink.svg" />
                         </a>
-                    </div>
+                    </div> -->
 
                     <div class="form__hidden">
                         {{ form.image|addclass:"form__file" }}
@@ -113,7 +113,7 @@
             </div>
         </div>
         <div class="form__footer">
-            {% if request.resolver_match.url_name == 'new_recipe' %}
+            {% if is_new_recipe %}
                 <button class="button button_style_blue">Создать рецепт</button>
             {% else %}
                 <button class="button button_style_blue">Сохранить</button>

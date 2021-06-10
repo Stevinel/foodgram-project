@@ -108,6 +108,9 @@ class IngredientItem(models.Model):
     )
     quantity = models.PositiveSmallIntegerField(validators=(MinValueValidator(1),))
 
+    def __str__(self):
+        return self.ingredient.title
+
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,

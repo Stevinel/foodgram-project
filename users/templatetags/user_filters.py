@@ -16,26 +16,68 @@ def addclass(field, css):
 
 @register.filter(name='get_filter_values')
 def get_filter_values(value):
-    """
-    Cоздание списка из параметорв breakfast/lunch/dinner
-    полученных в форме QueryDict из GET-запроса.
-    """
     return value.getlist('filters')
 
 
 @register.filter(name='get_filter_link')
 def get_filter_values(request, tag):
-    """Изменение строки запроса в соответствии с выбранными тегами."""
     new_request = request.GET.copy()
-    # eсли тег уже есть в списке, он должен
-    # выключиться при нажатии в браузере - удаляем его
     if tag.value in request.GET.getlist('filters'):
         filters = new_request.getlist('filters')
         filters.remove(tag.value)
         new_request.setlist('filters', filters)
-    # если тега ещё нет, то добавляем его в список
     else:
         new_request.appendlist('filters', tag.value)
-    # возвращаем новый запрос с помощью метода QueryDict,
-    # который формирует строку запроса
     return new_request.urlencode()
+
+@register.filter()
+def url_with_get(request, number):
+    query = request.GET.copy()
+    query['page'] = number
+    return query.urlencode()
+
+
+
+@register.filter(name='is_favorite')
+def is_favorite(request, recipe):
+    """Определяет находится ли рецепт в избранном."""
+
+    if Favorite.objects.filter(
+        user=request.user, recipe=recipe
+    ).exists():
+        return True
+
+    return False
+
+
+# @register.filter(name='is_follower')
+# def is_follower(request, profile):
+#     """Определяет подписан ли пользователь на автора."""
+
+#     if Subscription.objects.filter(
+#         user=request.user, author=profile
+#     ).exists():
+#         return True
+
+#     return False
+
+
+@register.filter(name='is_in_purchases')
+def is_in_purchases(request, recipe):
+    """Определяет находится ли рецепт в списке покупок."""
+
+    if ShoppingList.objects.filter(
+        user=request.user, recipe=recipe
+    ).exists():
+        return True
+
+@register.filter
+def even(num):
+    if (num % 10 == 1) and (num % 100 != 11):
+        word_out = 'рецепт'
+    elif (num % 10 >= 2) and (num % 10 <= 4) and (
+            num % 100 < 10 or num % 100 >= 20):
+        word_out = 'рецепта'
+    else:
+        word_out = 'рецептов'
+    return word_out
