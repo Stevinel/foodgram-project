@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe, Tag, User
 
 
 class RecipeCreateForm(forms.ModelForm):
@@ -34,3 +34,9 @@ class RecipeForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = ('title', "cooking_time", "description", "image",)
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email')

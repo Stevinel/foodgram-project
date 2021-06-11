@@ -8,7 +8,6 @@
             <li class="nav__item {% if favorites %} nav__item_active {% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
             <li class="nav__item {% if shop_list %} nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
         </ul>
-
         <ul class="nav__items list">
             {% if user.is_authenticated %}
                 <li class="nav__item {% if profile %} nav__item_active {% endif %}"><a href="{% url 'profile' user %}" class="nav__link link">{{ user }}</a></li>

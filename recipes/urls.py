@@ -29,5 +29,8 @@ urlpatterns = [
         "subscriptions/<int:author_id>",
         views.subscriptions,
         name="subscriptions"
-    )
+    ),
+    path(
+        "<str:username>/profile_edit", views.profile_edit, name="profile_edit"
+    ),
 ]

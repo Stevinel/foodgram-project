@@ -43,9 +43,7 @@
         <div class="form__group">
             <label for="nameIngredient" class="form__label">Ингредиенты</label>
             <div class="form__field-group">
-                    
                 <div class="form__field-group-ingredientes">
-                    
                     <div class="form__dropdown">
                         <input type="text" id="nameIngredient" class="form__input">
                         <div class="form__dropdown-items"></div>
@@ -59,7 +57,7 @@
                     <div class="form__field-item-ingredient" id="ing{{ forloop.counter }}">
                         <span> {{ amount.ingredient.title }} - {{ amount.quantity }} {{ amount.ingredient.dimension }}</span>
                         <span class="form__field-item-delete"></span>
-                        <input id="nameIngredient_{{ forloop.counter }}" name="nameIngredient_{{ forloop.counter }}" type="hidden" value="{{ amount.ingredient.title }}"
+                        <input id="nameIngredient_{{ forloop.counter }}" name="nameIngredient_{{ forloop.counter }}" type="hidden" value="{{ amount.ingredient.title }}" class="ing_counter">
                         <input id="valueIngredient_{{ forloop.counter }}" name="valueIngredient_{{ forloop.counter }}" type="hidden" value="{{ amount.quantity }}">
                         <input id="unitsIngredient_{{ forloop.counter }}" name="unitsIngredient_{{ forloop.counter }}" type="hidden" value="{{ amount.ingredient.dimension }}">
                     </div>

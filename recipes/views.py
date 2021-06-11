@@ -14,7 +14,7 @@ from django.http import  JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from django.db.models import Count
-from .forms import RecipeCreateForm, RecipeForm
+from .forms import RecipeCreateForm, RecipeForm, UserEditForm
 from .models import ( Favorite, Ingredient, Recipe,
                      Tag, User)
 import csv
@@ -60,11 +60,17 @@ def recipe_view(request, recipe_id):
 def profile(request, username):
     """Профиль пользователя"""
     author = get_object_or_404(User, username=username)
-    recipe = author.recipes.all()
-    tags_values = request.GET.getlist('filters')
-    if tags_values:
-        recipe = recipe.filter(tag__title__in=tags_values).all()
-    tags = Tag.objects.all()
+    tags_list = request.GET.getlist('filters')
+    if tags_list == []:
+        tags_list = ['breakfast', 'lunch', 'dinner']
+
+    recipe = Recipe.objects.filter(
+        tag__value__in=tags_list
+    ).prefetch_related(
+        'tag'
+    ).distinct()
+
+    all_tags = Tag.objects.all()
     paginator = Paginator(recipe, 6)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
@@ -73,7 +79,7 @@ def profile(request, username):
     context = {
         'page': page,
         'paginator': paginator,
-        'tags': tags,
+        'all_tags': all_tags,
         'author': author,
         'is_following': is_following,
     }
@@ -130,7 +136,6 @@ def recipe_edit(request, recipe_id):
         )
 
     if request.method == 'POST':
-        new_tags = get_tag(request)
         form = RecipeForm(
             request.POST,
             files=request.FILES or None,
@@ -141,6 +146,7 @@ def recipe_edit(request, recipe_id):
             my_recipe = form.save(commit=False)
             my_recipe.author = request.user
             my_recipe.save()
+            new_tags = get_tag(request)
             my_recipe.recipe_ingredients.all().delete()
             ingredients = get_ingredients(request)
             for title, quantity in ingredients.items():
@@ -370,7 +376,7 @@ def get_purchases(request):
                 ing[title] = [quantity, dimension]
 
     response = HttpResponse(content_type='txt/csv')
-    response['Content-Disposition'] = 'attachment; filename="shop_list.txt"'
+    response['Content-Disposition'] = 'attachment; filename="shop_list.doc"'
     writer = csv.writer(response)
 
     for key, value in ing.items():
@@ -409,3 +415,15 @@ def purchases(request, recipe_id):
             return JsonResponse({'success': True})
 
         return JsonResponse({'success': False})
+
+@login_required
+def profile_edit(request, username):
+    """"Функция редактирования профиля"""
+    user_profile = get_object_or_404(User, username=username)
+    if request.user != user_profile:
+        return redirect('profile', username=user_profile.username)
+    form = UserEditForm(request.POST or None, instance=user_profile)
+    if form.is_valid():
+        form.save()
+        return redirect('profile', username=user_profile.username)
+    return render(request, 'profile_edit.html', {'form': form})
