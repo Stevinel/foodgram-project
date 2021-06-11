@@ -2,12 +2,6 @@ from django.db import models
 from users.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-import random
-import string
-
-def random_slug(size=20, chars=string.ascii_uppercase + string.digits):
-    """Generation slug code"""
-    return "".join(random.choice(chars) for _ in range(size))
 
 
 def validate_not_zero(value):
@@ -29,13 +23,9 @@ class Recipe(models.Model):
         through_fields=('recipe', 'ingredient'),
         verbose_name='Ингредиенты',
     )
-    tag = models.ManyToManyField("Tag")
+    tag = models.ManyToManyField("Tag", related_name='recipes')
     cooking_time = models.PositiveIntegerField("Время приготовления в минутах", validators=[validate_not_zero])
     description = models.TextField(null=True)
-    slug = models.SlugField("Адрес",
-        max_length=200,
-        unique=True, default=random_slug
-    )
 
     class Meta:
         ordering = ('-pub_date',)
@@ -47,7 +37,7 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
-    title = models.CharField("Название ингредиента", max_length=50)
+    title = models.CharField("Название ингредиента", max_length=100)
     dimension = models.CharField("Единица измерения", max_length=10)
 
     class Meta:
@@ -114,14 +104,14 @@ class IngredientItem(models.Model):
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
-        related_name="shopping_list",
+        related_name="shop_list",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name="in_user_shopping_list",
+        related_name="shop_list",
         on_delete=models.CASCADE,
         blank=True,
         null=True,

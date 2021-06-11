@@ -5,14 +5,14 @@ from .models import Recipe, Ingredient, Tag
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("pk", "author", "title", "image", "cooking_time", "slug", )
+    list_display = ("pk", "author", "title", "image", "cooking_time", )
     search_fields = ("title",)
-    prepopulated_fields = {"slug": ("title",)}
     empty_value_display = "-пусто-"
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("pk", "title", "dimension")
+    search_fields = ("title",)
     empty_value_display = "-пусто-"
 
 @admin.register(Tag)

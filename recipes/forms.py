@@ -27,3 +27,10 @@ class RecipeCreateForm(forms.ModelForm):
                    'autocomplete': 'off'}
         )
     )
+
+
+class RecipeForm(forms.ModelForm):
+
+    class Meta:
+        model = Recipe
+        fields = ('title', "cooking_time", "description", "image",)

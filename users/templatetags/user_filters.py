@@ -2,6 +2,7 @@ from django import template
 from django.utils.html import strip_tags
 
 from recipes.models import Favorite, ShoppingList
+from users.models import Follow
 
 register = template.Library()
 
@@ -50,16 +51,16 @@ def is_favorite(request, recipe):
     return False
 
 
-# @register.filter(name='is_follower')
-# def is_follower(request, profile):
-#     """Определяет подписан ли пользователь на автора."""
+@register.filter(name='is_follower')
+def is_follower(request, profile):
+    """Определяет подписан ли пользователь на автора."""
 
-#     if Subscription.objects.filter(
-#         user=request.user, author=profile
-#     ).exists():
-#         return True
+    if Follow.objects.filter(
+        user=request.user, author=profile
+    ).exists():
+        return True
 
-#     return False
+    return False
 
 
 @register.filter(name='is_in_purchases')

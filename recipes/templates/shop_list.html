@@ -5,11 +5,11 @@
     <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
 {% endblock static %}
 {% block content %}
-{% include "includes/header.html" with shop_list=True %}
+{% include 'includes/header.html' with shop_list=True %}
 {% csrf_token %}
 
 <main class="main container">
-    
+    <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
     <div class="main__header">
         <h1 class="main__title">Список покупок</h1>
     </div>
@@ -32,7 +32,7 @@
                 </li>
             {% endfor %}
         </ul>
-        <a href=""><button class="button button_style_blue">Скачать список</button></a>
+        <a href="{% url 'get_purchases' %}"><button class="button button_style_blue">Скачать список</button></a>
     
     </div>
 </main>
@@ -43,5 +43,5 @@
 <script src="{% static 'js/components/Header.js' %}"></script>
 <script src="{% static 'js/components/ShopList.js' %}"></script>
 <script src="{% static 'js/api/Api.js' %}"></script>
-<script src="{% static 'js/shopList.js' %}"></script>
+<script src="{% static 'shopList.js' %}"></script>
 {% endblock js%}

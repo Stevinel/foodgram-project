@@ -5,18 +5,20 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .forms import RecipeCreateForm
 from users.models import Follow
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from .utils import get_tag
-
+from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import  JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 from django.db.models import Count
-from .forms import RecipeCreateForm
+from .forms import RecipeCreateForm, RecipeForm
 from .models import ( Favorite, Ingredient, Recipe,
                      Tag, User)
+import csv
+                     
 
 
 
@@ -49,9 +51,9 @@ def index(request):
     }
     )
 
-def recipe_view(request, slug):
+def recipe_view(request, recipe_id):
     """Страница отдельного рецепта"""
-    recipe = get_object_or_404(Recipe, slug=slug)
+    recipe = get_object_or_404(Recipe, id=recipe_id)
     context = {'recipe': recipe}
     return render(request, 'recipe.html', context)
 
@@ -106,7 +108,6 @@ def new_recipe(request):
             quantity=quantity,
             ingredient=ingredient
         )
-        print(ingredient_item)
         ingredient_item.save()
     for i in tags_post:
         tag = get_object_or_404(Tag, title=i)
@@ -115,47 +116,72 @@ def new_recipe(request):
     return redirect('index')
 
 
+@login_required
+def recipe_edit(request, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    author = get_object_or_404(User, id=recipe.author_id)
+    all_tags = Tag.objects.all()
+    recipe_tags = recipe.tag.values_list('value', flat=True)
 
-
-
-def recipe_edit(request, slug):
-    recipe = get_object_or_404(Recipe, slug=slug)
-    if request.user != recipe.author:
-        return render(request, 'forbidden.html')
-    ingredients = recipe.ingredient.all()
-    tags = Tag.objects.all()
-    form = RecipeCreateForm(
-        request.POST or None,
-        files=request.FILES or None,
-        instance=recipe
-    )
-    tags_post = get_tag(request)
-    ingredient_names = request.POST.getlist('nameIngredient')
-    ingredient_units = request.POST.getlist('unitsIngredient')
-    amount = request.POST.getlist('valueIngredient')
-    image_name = recipe.image.name.split('/')[1]
-    context = {'form': form, 'tags': tags, 'ingredients': ingredients,
-               'recipe': recipe, 'image_name': image_name}
-    if not form.is_valid():
-        return render(request, 'new_recipe.html', context)
-    form.save()
-    products_num = len(ingredient_names)
-    new_ingredients = []
-    IngredientItem.objects.filter(recipe__slug=slug).delete()
-    for i in range(products_num):
-        product = Ingredient.objects.get(title=ingredient_names[i],
-                                         dimension=ingredient_units[i])
-        new_ingredients.append(
-            IngredientItem(recipe=recipe, ingredients=product, count=amount[i])
+    if request.user != author:
+        return redirect(
+            "recipe",
+            recipe_id=recipe_id
         )
-    IngredientItem.objects.bulk_create(new_ingredients)
-    recipe.tag.clear()
-    for i in tags_post:
-        tag = get_object_or_404(Tag, title=i)
-        recipe.tag.add(tag)
-    return redirect('index')
 
+    if request.method == 'POST':
+        new_tags = get_tag(request)
+        form = RecipeForm(
+            request.POST,
+            files=request.FILES or None,
+            instance=recipe
+        )
 
+        if form.is_valid():
+            my_recipe = form.save(commit=False)
+            my_recipe.author = request.user
+            my_recipe.save()
+            my_recipe.recipe_ingredients.all().delete()
+            ingredients = get_ingredients(request)
+            for title, quantity in ingredients.items():
+                ingredient = Ingredient.objects.get(title=title)
+                amount = IngredientItem(
+                    recipe=my_recipe,
+                    ingredient=ingredient,
+                    quantity=quantity
+                )
+                amount.save()
+
+            my_recipe.tag.set(new_tags)
+            return redirect(
+                'recipe',
+                recipe_id=recipe.id,
+            )
+
+    form = RecipeForm(instance=recipe)
+    image_name = recipe.image.name.split('/')[1]
+    return render(request, "new_recipe.html", {
+        'form': form,
+        'recipe': recipe,
+        'all_tags': all_tags,
+        'recipe_tags': recipe_tags,
+        'image_name':image_name,
+    })
+
+@login_required
+def recipe_delete(request, username, recipe_id):
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    author = get_object_or_404(User, id=recipe.author_id)
+
+    if request.user != author:
+        return redirect(
+            "recipe",
+            username=username,
+            recipe_id=recipe_id
+        )
+
+    recipe.delete()
+    return redirect("profile", username=username)
 
 def ingredients(request):
     text = request.GET['query']
@@ -195,8 +221,9 @@ def follow_index(request):
     }
     )
 
-@login_required 
-def subscription(request, author_id):
+@login_required
+@require_http_methods(["POST", "DELETE"])
+def subscriptions(request, author_id):
 
     # подписаться на автора
     if request.method == "POST":
@@ -299,17 +326,86 @@ def change_favorites(request, recipe_id):
         return JsonResponse({'success': False})
 
 
-@login_required()
+@login_required
 def shop_list(request):
-    user = request.user
-    my_shop_list = ShoppingList.objects.filter(user=user).first()
-    recipes = None
-    if my_shop_list:
-        recipes = my_shop_list.recipes.all()
-    return render(
-        request,
-        template_name='shop_list.html',
-        context={'recipes': recipes}
+    """Отображение страницы со списком покупок."""
+    if request.GET:
+        recipe_id = request.GET.get('recipe_id')
+        ShoppingList.objects.get(
+            recipe__id=recipe_id
+        ).delete()
+
+    purchases = Recipe.objects.filter(shop_list__user=request.user)
+
+    return render(request, "shop_list.html", {
+        'purchases': purchases,
+    }
     )
 
+@login_required
+def get_purchases(request):
+    """Скачать лист покупок."""
+    recipes = Recipe.objects.filter(
+        shop_list__user=request.user
+    )
 
+    ing: dict = {}
+
+    for recipe in recipes:
+        ingredients = recipe.ingredient.values_list(
+            'title', 'dimension'
+        )
+        amount = recipe.recipe_ingredients.values_list(
+            'quantity', flat=True
+        )
+
+        for num in range(len(ingredients)):
+            title: str = ingredients[num][0]
+            dimension: str = ingredients[num][1]
+            quantity: int = amount[num]
+
+            if title in ing.keys():
+                ing[title] = [ing[title][0] + quantity, dimension]
+            else:
+                ing[title] = [quantity, dimension]
+
+    response = HttpResponse(content_type='txt/csv')
+    response['Content-Disposition'] = 'attachment; filename="shop_list.txt"'
+    writer = csv.writer(response)
+
+    for key, value in ing.items():
+        writer.writerow([f'{key} ({value[1]}) - {value[0]}'])
+
+    return response
+
+
+@login_required
+@require_http_methods(["POST", "DELETE"])
+def purchases(request, recipe_id):
+
+    # добавить в список покупок
+    if request.method == "POST":
+        recipe_id = json.loads(request.body).get('id')
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
+
+        obj, created = ShoppingList.objects.get_or_create(
+            user=request.user, recipe=recipe
+        )
+
+        if not created:
+            return JsonResponse({'success': False})
+
+        return JsonResponse({'success': True})
+
+    # удалить из списка покупок
+    elif request.method == "DELETE":
+        recipe = get_object_or_404(Recipe, pk=recipe_id)
+
+        removed = ShoppingList.objects.filter(
+            user=request.user, recipe=recipe
+        ).delete()
+
+        if removed:
+            return JsonResponse({'success': True})
+
+        return JsonResponse({'success': False})
