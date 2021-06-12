@@ -20,9 +20,6 @@ from .models import ( Favorite, Ingredient, Recipe,
 import csv
                      
 
-
-
-
 def index(request):
     tags_list = request.GET.getlist('filters')
 
@@ -126,7 +123,7 @@ def new_recipe(request):
 def recipe_edit(request, recipe_id):
     recipe = get_object_or_404(Recipe, pk=recipe_id)
     author = get_object_or_404(User, id=recipe.author_id)
-    all_tags = Tag.objects.all()
+    tags = Tag.objects.all()
     recipe_tags = recipe.tag.values_list('value', flat=True)
 
     if request.user != author:
@@ -169,7 +166,7 @@ def recipe_edit(request, recipe_id):
     return render(request, "new_recipe.html", {
         'form': form,
         'recipe': recipe,
-        'all_tags': all_tags,
+        'tags': tags,
         'recipe_tags': recipe_tags,
         'image_name':image_name,
     })
