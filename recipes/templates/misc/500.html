@@ -1,0 +1,17 @@
+{% extends "base.html" %} 
+{% block title %} Ошибка 404 {% endblock %}
+{% block content %}
+{% include "includes/header.html" with index=True %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'pages/index.css' %}">
+
+<main class="main container">
+<div class="row">
+    <div class="col-md-12">
+        <h1>Ошибка 500</h1>
+        <p class="lead">Ошибка на сервере, попробуйте обновить страницу или обратиться позже</p>
+    </div>
+</div>
+</main>
+
+{% endblock %} 

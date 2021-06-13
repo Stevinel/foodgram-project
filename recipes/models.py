@@ -1,12 +1,8 @@
-from django.db import models
-from users.models import User
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db import models
 
+from users.models import User
 
-def validate_not_zero(value):
-    if value == 0:
-        raise ValidationError("Время приготовления не может быть равным нулю")
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -14,23 +10,24 @@ class Recipe(models.Model):
     )
     title = models.CharField("Название рецепта", max_length=50)
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-    image = models.ImageField("Фотография",
+    image = models.ImageField(
+        "Фотография",
         upload_to="recipes/",
     )
     ingredient = models.ManyToManyField(
-        'Ingredient',
-        through='IngredientItem',
-        through_fields=('recipe', 'ingredient'),
-        verbose_name='Ингредиенты',
+        "Ingredient",
+        through="IngredientItem",
+        through_fields=("recipe", "ingredient"),
+        verbose_name="Ингредиенты",
     )
-    tag = models.ManyToManyField("Tag", related_name='recipes')
-    cooking_time = models.PositiveIntegerField("Время приготовления в минутах", validators=[validate_not_zero])
+    tag = models.ManyToManyField("Tag", related_name="recipes")
+    cooking_time = models.PositiveIntegerField("Время приготовления")
     description = models.TextField(null=True)
 
     class Meta:
-        ordering = ('-pub_date',)
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
+        ordering = ("-pub_date",)
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
 
     def __str__(self):
         return self.title
@@ -41,11 +38,12 @@ class Ingredient(models.Model):
     dimension = models.CharField("Единица измерения", max_length=10)
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
 
     def __str__(self):
         return self.title
+
 
 class Tag(models.Model):
     title = models.CharField(max_length=15, db_index=True)
@@ -80,6 +78,7 @@ class Favorite(models.Model):
                 fields=["user", "recipe"], name="unique_favorite"
             )
         ]
+
     def __str__(self):
         return f"user: {self.user.username}, recipe:{self.recipe.title}"
 
@@ -88,23 +87,26 @@ class IngredientItem(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipe_ingredients',
+        related_name="recipe_ingredients",
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredients',
-        verbose_name='Ингридиент',
+        related_name="ingredients",
+        verbose_name="Ингредиент",
     )
-    quantity = models.PositiveSmallIntegerField(validators=(MinValueValidator(1),))
+    quantity = models.PositiveSmallIntegerField(
+        validators=(MinValueValidator(1),)
+    )
 
     def __str__(self):
         return self.ingredient.title
 
+
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
-        related_name="shop_list",
+        related_name="user_shopping_lists",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -125,6 +127,6 @@ class ShoppingList(models.Model):
                 fields=["user", "recipe"], name="unique_shoppinglist"
             )
         ]
+
     def __str__(self):
         return f"user: {self.user.username}, recipe:{self.recipe.title}"
-        

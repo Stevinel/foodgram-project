@@ -29,7 +29,7 @@
                 <p class="form__label">Теги</p>                
                 <div class="form__field-group">
                     <div class="tags">
-                        {% for tag in tags %}
+                        {% for tag in all_tags %}
                             <div class="tags__item">
                                 {% if is_new_recipe %}
                                 <input type="checkbox" name="{{ tag.title }}" id="id_{{ tag.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>

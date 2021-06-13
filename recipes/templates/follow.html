@@ -25,7 +25,7 @@
         <ul class="card-user__items">
             {% for author, recipes in recipe.items %}
                 {% if author == subscription%}
-                    {% for recipe in recipes %}
+                    {% for recipe in recipes|slice:3 %}
                         <li class="card-user__item">
                             <div class="recipe">
                                 {% load thumbnail %}

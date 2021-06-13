@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
 
@@ -12,7 +12,7 @@ class Follow(models.Model):
     )
     author = models.ForeignKey(
         User,
-        related_name="following",    
+        related_name="following",
         on_delete=models.CASCADE,
     )
 
@@ -26,4 +26,6 @@ class Follow(models.Model):
         ]
 
     def __str__(self):
-        return f"follower: {self.user.username}, following:{self.author.username}"
+        return (
+            f"follower: {self.user.username}, following:{self.author.username}"
+        )
