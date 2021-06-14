@@ -28,13 +28,11 @@
                 {% endif %}
                 </div>
             </div>
-
             <ul class="single-card__items">
                 {% for tag in recipe.tag.all %}
                     <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.title }}</span></li>
                 {% endfor %}
             </ul>
-
             <div class="single-card__items single-card__items_column">
                 <p class="single-card__text"><span class="icon-time"></span> {{ recipe.cooking_time }} мин.</p>
                 <ul class="single-card__items">
@@ -49,26 +47,22 @@
             <ul class="single-card__items">
                 <li class="single-card__item">
                 {% if request.user.is_authenticated %}
-
                         <button class="button button_style_light-blue-outline" name="purchases">
                         <span class="icon-check button__icon"></span> Рецепт добавлен</button>
                     {% else %}
                         <button class="button button_style_light-blue" name="purchases" data-out>
                         <span class="icon-plus button__icon"></span>Добавить в покупки</button>
-
                 {% endif %}
                 </li>
                 <li class="single-card__item">
                     {% if request.user.is_authenticated and request.user != recipe.author %}
-                    {% if not request|is_follower:author %}
-                        <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button>
-                    {% else %}
-                        <button class="button button_style_light-blue button_size_subscribe" name="subscribe" >Отписаться от автора</button>
+                        {% if not request|is_follower:author %}
+                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button>
+                        {% else %}
+                            <button class="button button_style_light-blue button_size_subscribe" name="subscribe" >Отписаться от автора</button>
+                        {% endif %}
                     {% endif %}
-                    {% endif %}
-
                 </li>
-
             </ul>
             <div class="single-card__section">
                 <h3 class="single-card__section-title">Ингридиенты:</h3> 
@@ -91,21 +85,17 @@
     <script src="{% static 'js/components/Favorites.js'%}"></script>
     <script src="{% static 'js/components/Subscribe.js'%}"></script>
     <script src="{% static 'js/config/config.js'%}"></script>
-
     <script src="{% static 'js/components/MainCards.js'%}"></script>
     <script src="{% static 'js/components/SingleCard.js'%}"></script>
     <script src="{% static 'js/components/Header.js'%}"></script>
-
     <script src="{% static 'js/api/Api.js'%}"></script>
     <script src="{% static 'js/singlePage.js'%}"></script>
 {% else %}
     <script src="{% static 'js/components/Purchases.js'%}"></script>
     <script src="{% static 'js/config/config.js'%}"></script>
-
     <script src="{% static 'js/components/MainCards.js'%}"></script>
     <script src="{% static 'js/components/SingleCard.js'%}"></script>
     <script src="{% static 'js/components/Header.js'%}"></script>
-
     <script src="{% static 'js/api/Api.js'%}"></script>
     <script src="{% static 'js/singlePageNotAuth.js'%}"></script>
     {% endif %}

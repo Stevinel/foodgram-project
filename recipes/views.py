@@ -91,6 +91,7 @@ def new_recipe(request):
 def recipe_edit(request, recipe_id):
     """Редактировать рецепт."""
     recipe = get_object_or_404(Recipe, id=recipe_id)
+    image_name = recipe.image.name.split('/')[1]
     all_tags = Tag.objects.all()
     if request.user != recipe.author and not request.user.is_staff:
         return redirect(to=recipe_view, recipe_id=recipe_id)
@@ -106,7 +107,11 @@ def recipe_edit(request, recipe_id):
         tags_post = get_tags(request)
         recipe.tag.set(tags_post)
         return redirect(to=recipe_view, recipe_id=recipe_id)
-    context = {"form": form, "recipe": recipe, "all_tags": all_tags}
+    context = {
+        "form": form,
+        "recipe": recipe,
+        "all_tags": all_tags,
+        "image_name": image_name}
     return render(request, "new_recipe.html", context)
 
 

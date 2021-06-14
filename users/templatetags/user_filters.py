@@ -11,11 +11,6 @@ def add_classes(field, css):
     return field.as_widget(attrs={"class": css})
 
 
-@register.filter
-def addclass(field, css):
-    return field.as_widget(attrs={"class": css})
-
-
 @register.filter(name="get_filter_values")
 def get_filter_values(value):
     return value.getlist("filters")
@@ -42,28 +37,20 @@ def url_with_get(request, number):
 
 @register.filter(name="is_favorite")
 def is_favorite(request, recipe):
-    """Определяет находится ли рецепт в избранном."""
-
     if Favorite.objects.filter(user=request.user, recipe=recipe).exists():
         return True
-
     return False
 
 
 @register.filter(name="is_follower")
 def is_follower(request, profile):
-    """Определяет подписан ли пользователь на автора."""
-
     if Follow.objects.filter(user=request.user, author=profile).exists():
         return True
-
     return False
 
 
 @register.filter(name="is_in_purchases")
 def is_in_purchases(request, recipe):
-    """Определяет находится ли рецепт в списке покупок."""
-
     if ShoppingList.objects.filter(user=request.user, recipe=recipe).exists():
         return True
 

@@ -18,7 +18,7 @@
         <div class="form__group">
             <label for="{{ form.title.id_for_label }}" class="form__label">Название рецепта</label>
             <div class="form__field-group">
-                {{ form.title|addclass:"form__input" }}
+                {{ form.title|add_classes:"form__input" }}
                 {% for error in form.title.errors %}
                     <span class="form__error">{{ error }}</span>
                 {% endfor %}
@@ -77,7 +77,7 @@
         <div class="form__group">
             <label for="{{ form.cooking_time.id_for_label }}" class="form__label">Время приготовления</label>
             <div class="form__field-group form__field-group_time">
-                {{ form.cooking_time|addclass:"form__input" }}
+                {{ form.cooking_time|add_classes:"form__input" }}
                 <label for="{{ field.cooking_time.id_for_label }}" class="form__label">минут</label>
                 {% for error in form.cooking_time.errors %}
                     <span class="form__error">{{ error }}</span>
@@ -87,7 +87,7 @@
         <div class="form__group">
             <label for="{{ form.description.id_for_label }}" class="form__label">Описание</label>
             <div class="form__field-group">
-                {{ form.description|addclass:"form__textarea" }}
+                {{ form.description|add_classes:"form__textarea" }}
                 {% for error in form.description.errors %}
                     <span class="form__error">{{ error }}</span>
                 {% endfor %}
@@ -100,15 +100,8 @@
                     <label for="{{ form.image.id_for_label }}" class="form__file-button">Выбрать файл</label>
 
                     <div class="form__fileitem">{{ image_name }}</div>
-<!-- 
-                    <div class="form__fileitem">
-                        <a href="#">
-                            <img src="/static/admin/img/icon-deletelink.svg" />
-                        </a>
-                    </div> -->
-
                     <div class="form__hidden">
-                        {{ form.image|addclass:"form__file" }}
+                        {{ form.image|add_classes:"form__file" }}
                     </div>
                 </div>
 
@@ -128,9 +121,6 @@
         </div>
     </form>
 </div>
-</main>
-<script>
-</script>
 <script src="{% static 'js/config/config.js' %}"></script>
 <script src="{% static 'js/components/Header.js' %}"></script>
 <script src="{% static 'js/utils/debouncing.js' %}"></script>
