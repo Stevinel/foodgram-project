@@ -2,7 +2,7 @@
 {% block title %}Список покупок{% endblock %}
 {% block static %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
+<link rel="stylesheet" href="{% static 'pages/shopList.css' %}">
 {% endblock static %}
 {% block content %}
 {% include 'includes/header.html' with shop_list=True %}
@@ -25,12 +25,13 @@
                         <h3 class="recipe__title">{{ recipe.title }}</h3>
                         <p class="recipe__text"><span class="icon-time"></span>&#160;&#160;{{ recipe.cooking_time }}&#160;мин</p>
                     </div>
-
                     <a href="{% url 'shop_list' %}?recipe_id={{recipe.id}}" class="shopping-list__button link">Удалить</a>
                 </li>
             {% endfor %}
         </ul>
+        {% if purchases.exists %}
         <a href="{% url 'get_purchases' %}"><button class="button button_style_blue">Скачать список</button></a>
+        {% endif %}
     </div>
 </main>
 <script src="{% static 'js/config/config.js' %}"></script>

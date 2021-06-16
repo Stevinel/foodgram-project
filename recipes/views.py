@@ -9,11 +9,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from foodgram.settings import POSTS_PER_PAGE
-from users.models import Follow
 
-from .forms import RecipeCreateForm, RecipeForm, UserEditForm
-from .models import Favorite, Recipe, ShoppingList, Tag, User
+from .forms import RecipeCreateForm, UserEditForm
+from .models import Favorite, Recipe, ShoppingList, Tag, User, Follow
 from .utilities import *
+
+JSON_RESPONSE_FALSE = JsonResponse({"success": False})
+JSON_RESPONSE_TRUE = JsonResponse({"success": True})
 
 
 def index(request):
@@ -72,7 +74,6 @@ def profile_edit(request, username):
 @login_required()
 def new_recipe(request):
     """Создание нового рецепта"""
-    all_tags = Tag.objects.all()
     form = RecipeCreateForm(request.POST or None, files=request.FILES or None)
     is_new_recipe = True
     all_tags = Tag.objects.all()
@@ -91,12 +92,10 @@ def new_recipe(request):
 def recipe_edit(request, recipe_id):
     """Редактировать рецепт."""
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    image_name = recipe.image.name.split('/')[1]
-    all_tags = Tag.objects.all()
     if request.user != recipe.author and not request.user.is_staff:
         return redirect(to=recipe_view, recipe_id=recipe_id)
 
-    form = RecipeForm(
+    form = RecipeCreateForm(
         request.POST or None, files=request.FILES or None, instance=recipe
     )
     if form.is_valid():
@@ -107,6 +106,9 @@ def recipe_edit(request, recipe_id):
         tags_post = get_tags(request)
         recipe.tag.set(tags_post)
         return redirect(to=recipe_view, recipe_id=recipe_id)
+
+    image_name = recipe.image.name.split("/")[1]
+    all_tags = Tag.objects.all()
     context = {
         "form": form,
         "recipe": recipe,
@@ -134,7 +136,7 @@ def follow_index(request):
     recipe = {}
     for sub in subscriptions:
         recipe[sub] = Recipe.objects.filter(author=sub)
-    paginator = Paginator(subscriptions, POSTS_PER_PAGE)
+    paginator = Paginator(subscriptions, 3)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     return render(
@@ -161,8 +163,8 @@ def subscriptions(request, author_id):
         )
 
         if request.user == author or not created:
-            return JsonResponse({"success": False})
-        return JsonResponse({"success": True})
+            return JSON_RESPONSE_FALSE
+        return JSON_RESPONSE_TRUE
 
     elif request.method == "DELETE":
         author = get_object_or_404(User, id=author_id)
@@ -172,22 +174,21 @@ def subscriptions(request, author_id):
         ).delete()
 
         if removed:
-            return JsonResponse({"success": True})
-        return JsonResponse({"success": False})
+            return JSON_RESPONSE_TRUE
+        return JSON_RESPONSE_FALSE
 
 
 @login_required()
 @require_http_methods("DELETE")
 def delete_subscription(request, author_id):
     """API view для удаления подписок"""
-    data = {"success": "true"}
     follow = get_object_or_404(
         Follow, user__username=request.user.username, author__id=author_id
     )
     if not follow:
-        data["success"] = "false"
+        JSON_RESPONSE_TRUE = JSON_RESPONSE_FALSE
     follow.delete()
-    return JsonResponse(data)
+    return JSON_RESPONSE_TRUE
 
 
 @login_required

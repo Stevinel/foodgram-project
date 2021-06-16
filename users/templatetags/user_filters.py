@@ -1,7 +1,7 @@
 from django import template
 
-from recipes.models import Favorite, ShoppingList
-from users.models import Follow
+from recipes.models import Favorite, ShoppingList, Follow
+from foodgram.settings import ALLOWED_HOSTS
 
 register = template.Library()
 

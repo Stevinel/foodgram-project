@@ -34,9 +34,9 @@ def get_tags_filter(request):
 
 def get_tags(request):
     tags_list = []
-    for i, j in request.POST.items():
-        if j == "on":
-            tags_list.append(i)
+    for field, value in request.POST.items():
+        if value == "on":
+            tags_list.append(field)
     return tags_list
 
 
@@ -55,12 +55,11 @@ def ingredients(request):
 def add_ingredients_to_recipe(ingredients, recipe):
     """Добавить ингредиенты в рецепт."""
     for title, quantity in ingredients.items():
-        ingredient = Ingredient.objects.get(title=title)
+        ingredient = get_object_or_404(Ingredient, title=title)
         ingredient_item = IngredientItem(
             recipe=recipe, quantity=quantity, ingredient=ingredient
         )
         ingredient_item.save()
-    return True
 
 
 def save_recipe(request, form):
@@ -71,8 +70,8 @@ def save_recipe(request, form):
     ingredients = get_ingredients(request)
     add_ingredients_to_recipe(ingredients, recipe)
     tags_post = get_tags(request)
-    for i in tags_post:
-        tag = get_object_or_404(Tag, title=i)
+    for title in tags_post:
+        tag = get_object_or_404(Tag, title=title)
         recipe.tag.add(tag)
     form.save_m2m()
     return recipe

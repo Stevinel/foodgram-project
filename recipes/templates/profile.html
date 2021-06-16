@@ -44,8 +44,8 @@
 
         <div class="card-list" >
             {% for recipe in page %}
-            {% include "includes/recipe_menu.html" %}
-        {% endfor %}
+                {% include "includes/recipe_menu.html"  %}
+            {% endfor %}
         </div>
         {% if page.paginator.count  > 6 %}
             {% include "includes/paginator.html"%}

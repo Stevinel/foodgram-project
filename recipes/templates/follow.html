@@ -5,7 +5,7 @@
 {% load static %}
 {% endblock static %}
 {% block content %}
-    {% include 'includes/header.html' with follow=True %}
+{% include 'includes/header.html' with follow=True %}
 {% csrf_token %}
 <link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">
 <main class="main container">
@@ -13,6 +13,7 @@
         <h1 class="main__title">Мои подписки</h1>
     </div>
     <div class="card-list">
+    
     {% for subscription in page %}
         <div class="card-user" data-author={{ subscription.id }}>
             <div class="card-user__header">
@@ -21,7 +22,7 @@
     <div class="card-user__body">
         <ul class="card-user__items">
             {% for author, recipes in recipe.items %}
-                {% if author == subscription%}
+                {% if author == subscription %}
                     {% for recipe in recipes|slice:3 %}
                         <li class="card-user__item">
                             <div class="recipe">
@@ -35,16 +36,19 @@
                         </li>
                     {% endfor%}
                 {% endif %}
-            {% endfor %}
+            
             {% if subscription.recipe_count > 3 %}<li class="card-user__item">
-                <a href="{% url 'profile' username=subscription.username %}" class="card-user__link link">Еще рецептов: {{ subscription.recipe_count|add:-3 }}</a>
+                <a href="{% url 'profile' author.username %}" class="card-user__link link">Ещё {{subscription.recipe_count}} {{ subscription.recipe_count|add:-3|even }}...</a>{{recipe.author}}
             </li>
             {% endif %}
             {% endfor %}
         </ul>
     </div>
     <div class="card-user__footer">
-        <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+        {% if subscription in page %}
+            <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
+        {% endif %}
+        {% endfor %}
     {% if page.has_other_pages %}
         {% include 'pagination.html' with items=page paginator=paginator%}
     {% endif %}

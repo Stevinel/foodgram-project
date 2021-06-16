@@ -130,3 +130,31 @@ class ShoppingList(models.Model):
 
     def __str__(self):
         return f"user: {self.user.username}, recipe:{self.recipe.title}"
+        
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name="follower",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User,
+        related_name="following",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique_follow"
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f"follower: {self.user.username}, following:{self.author.username}"
+        )
+

@@ -46,7 +46,7 @@
             </div>
             <ul class="single-card__items">
                 <li class="single-card__item">
-                {% if request.user.is_authenticated %}
+                {% if user.is_authenticated %}
                         <button class="button button_style_light-blue-outline" name="purchases">
                         <span class="icon-check button__icon"></span> Рецепт добавлен</button>
                     {% else %}
@@ -79,23 +79,18 @@
         </div>
     </div>
 </main>
+<script src="{% static 'js/components/Purchases.js'%}"></script>
+<script src="{% static 'js/components/Favorites.js'%}"></script>
+<script src="{% static 'js/components/Subscribe.js'%}"></script>
+<script src="{% static 'js/config/config.js'%}"></script>
+<script src="{% static 'js/components/MainCards.js'%}"></script>
+<script src="{% static 'js/components/SingleCard.js'%}"></script>
+<script src="{% static 'js/components/Header.js'%}"></script>
 
 {% if user.is_authenticated %}
-    <script src="{% static 'js/components/Purchases.js'%}"></script>
-    <script src="{% static 'js/components/Favorites.js'%}"></script>
-    <script src="{% static 'js/components/Subscribe.js'%}"></script>
-    <script src="{% static 'js/config/config.js'%}"></script>
-    <script src="{% static 'js/components/MainCards.js'%}"></script>
-    <script src="{% static 'js/components/SingleCard.js'%}"></script>
-    <script src="{% static 'js/components/Header.js'%}"></script>
     <script src="{% static 'js/api/Api.js'%}"></script>
     <script src="{% static 'js/singlePage.js'%}"></script>
 {% else %}
-    <script src="{% static 'js/components/Purchases.js'%}"></script>
-    <script src="{% static 'js/config/config.js'%}"></script>
-    <script src="{% static 'js/components/MainCards.js'%}"></script>
-    <script src="{% static 'js/components/SingleCard.js'%}"></script>
-    <script src="{% static 'js/components/Header.js'%}"></script>
     <script src="{% static 'js/api/Api.js'%}"></script>
     <script src="{% static 'js/singlePageNotAuth.js'%}"></script>
     {% endif %}
