@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 recipes/static/vendor
+.media

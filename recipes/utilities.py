@@ -16,9 +16,10 @@ def get_ingredients(request):
 
 
 def get_tags_filter(request):
+    tags_list = Tag.objects.values_list("value")
     tags_list_filter = request.GET.getlist("filters")
     if tags_list_filter == []:
-        tags_list_filter = ["breakfast", "lunch", "dinner"]
+        tags_list_filter = tags_list
 
     recipe_list = (
         Recipe.objects.filter(tag__value__in=tags_list_filter)

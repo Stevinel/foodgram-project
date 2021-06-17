@@ -23,18 +23,18 @@
     <div class="card__footer">          
         {% if user.is_authenticated %}
             {% if request|is_in_purchases:recipe %}
-                <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span>Рецепт добавлен</button>
+                {% include 'includes/buttons/added_to_shop.html' %}
             {% else %}
-                <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+                {% include 'includes/buttons/add_to_shop.html' %}
             {% endif%}
             
             {% if request|is_favorite:recipe %}
-                <button class="button button_style_none .icon-favorite_active" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
+                {% include 'includes/buttons/added_to_favorites.html' %}
             {% else %}
-                <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
+                {% include 'includes/buttons/add_to_favorites.html' %}
             {% endif %}
         {% else %}
-            <button class="button button_style_light-blue" onclick="location.href= '/auth/login/';"><span class="icon-plus button__icon"></span> Добавить в покупки</button></li>
+            {% include 'includes/buttons/add_to_shop_notauth.html' %}
         {% endif %}
     </div>    
  </div>

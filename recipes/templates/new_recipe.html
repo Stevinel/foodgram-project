@@ -1,16 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Создание рецепта{% endblock %}
+{% block title %}{% if recipe == None %}Создание{% else %}Редактирование{% endif %} рецепта{% endblock %}
 {% load user_filters %}
 {% block static %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+<link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock static %}
+{% block header%}
+{% include "includes/header.html" with new_recipe=True %}
+{% endblock %}
 {% block content %}
 
-{% include "includes/header.html" with new_recipe=True %}
-
 <div class="main__header">
-    <h1 class="main__title">{% if is_new_recipe %}Создание{% else %}Редактирование{% endif %} рецепта</h1>
+    <h1 class="main__title">{% if recipe == None %}Создание{% else %}Редактирование{% endif %} рецепта</h1>
 </div>
 <div class="form-container">
     <form class="form" method="post" enctype="multipart/form-data">
@@ -31,7 +32,7 @@
                     <div class="tags">
                         {% for tag in all_tags %}
                             <div class="tags__item">
-                                {% if is_new_recipe %}
+                                {% if recipe == None %}
                                 <input type="checkbox" name="{{ tag.title }}" id="id_{{ tag.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
                                 <label for="id_{{ tag.title }}" class="tags__label">{{ tag.title }}</label>
                                 {% else %}
@@ -50,11 +51,11 @@
             <div class="form__field-group">
                 <div class="form__field-group-ingredientes">
                     <div class="form__dropdown">
-                        <input type="text" id="nameIngredient" class="form__input">
+                        <input type="text" id="nameIngredient" class="form__input" required>
                         <div class="form__dropdown-items"></div>
                     </div>
 
-                    <input type="number" id="cantidad" class="form__input" min="0">
+                    <input type="number" id="cantidad" class="form__input" min="0" required>
                     <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                 </div>
                 <div class="form__field-group-ingredientes-container">
@@ -112,10 +113,10 @@
             </div>
         </div>
         <div class="form__footer">
-            {% if is_new_recipe %}
-                <button class="button button_style_blue">Создать рецепт</button>
+            {% if recipe == None %}
+                {% include 'includes/buttons/create_recipe.html' %}
             {% else %}
-                <button class="button button_style_blue">Сохранить</button>
+                {% include 'includes/buttons/save_button.html' %}
                 <a style="margin-left: 2.5em" href="{% url 'recipe_delete' recipe.author.username recipe.id %}" class="form__ingredient-link">Удалить</a>
             {% endif %}
         </div>

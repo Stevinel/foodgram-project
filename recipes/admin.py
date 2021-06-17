@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag, Follow
+from .models import Follow, Ingredient, Recipe, Tag
 
 
 @admin.register(Recipe)
@@ -33,4 +33,3 @@ class TagAdmin(admin.ModelAdmin):
 class FollowAdmin(admin.ModelAdmin):
     list_display = ("user", "author")
     empty_value_display = "-пусто-"
-

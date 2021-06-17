@@ -13,8 +13,7 @@ class RecipeCreateForm(forms.ModelForm):
     class Meta:
         model = Recipe
         fields = (
-            "title",
-            "ingredient",
+            "title",  # при добавлении полей теги и ингредиенты, перестаёт создавать и рекдактировать посты
             "description",
             "image",
             "cooking_time",
@@ -24,8 +23,7 @@ class RecipeCreateForm(forms.ModelForm):
         Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False
     )
     ingredient = forms.CharField(max_length=250, required=False)
-    image = forms.ImageField(
-        required=True)
+    image = forms.ImageField(required=True)
     cooking_time = forms.fields.IntegerField(
         required=True,
         min_value=1,

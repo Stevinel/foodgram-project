@@ -1,7 +1,9 @@
 {% extends 'base.html'%}
 {% block title %}Рецепты{% endblock %}
-{% block content %}
+{% block header %}
 {% include "includes/header.html" with index=True %}
+{% endblock %}
+{% block content %}
 {% load static %}
 {% csrf_token %}
 

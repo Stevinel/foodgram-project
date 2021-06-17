@@ -19,4 +19,6 @@
 .button:active {
     box-shadow: 0 0 7px #ddd;
 }
-
+.button.download {
+    line-height: 22px;
+}

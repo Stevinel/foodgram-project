@@ -2,8 +2,8 @@ import csv
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.paginator import Paginator
-from django.db.models import Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 from foodgram.settings import POSTS_PER_PAGE
 
 from .forms import RecipeCreateForm, UserEditForm
-from .models import Favorite, Recipe, ShoppingList, Tag, User, Follow
+from .models import Favorite, Follow, Recipe, ShoppingList, Tag, User
 from .utilities import *
 
 JSON_RESPONSE_FALSE = JsonResponse({"success": False})
@@ -46,6 +46,7 @@ def profile(request, username):
     """Профиль пользователя"""
     author = get_object_or_404(User, username=username)
     tags_list_filter, recipe_list, all_tags = get_tags_filter(request)
+    recipe_list = recipe_list.filter(author=author.id)
     paginator = Paginator(recipe_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -75,15 +76,13 @@ def profile_edit(request, username):
 def new_recipe(request):
     """Создание нового рецепта"""
     form = RecipeCreateForm(request.POST or None, files=request.FILES or None)
-    is_new_recipe = True
-    all_tags = Tag.objects.all()
     if form.is_valid():
         recipe = save_recipe(request, form)
         return redirect(to=recipe_view, recipe_id=recipe.id)
+    all_tags = Tag.objects.all()
     context = {
         "form": form,
         "all_tags": all_tags,
-        "is_new_recipe": is_new_recipe,
     }
     return render(request, "new_recipe.html", context)
 
@@ -113,7 +112,8 @@ def recipe_edit(request, recipe_id):
         "form": form,
         "recipe": recipe,
         "all_tags": all_tags,
-        "image_name": image_name}
+        "image_name": image_name,
+    }
     return render(request, "new_recipe.html", context)
 
 
@@ -130,12 +130,7 @@ def recipe_delete(request, username, recipe_id):
 @login_required
 def follow_index(request):
     """Страница подписок"""
-    subscriptions = User.objects.filter(following__user=request.user).annotate(
-        recipe_count=Count("recipes")
-    )
-    recipe = {}
-    for sub in subscriptions:
-        recipe[sub] = Recipe.objects.filter(author=sub)
+    subscriptions = User.objects.filter(following__user=request.user)
     paginator = Paginator(subscriptions, 3)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -145,7 +140,6 @@ def follow_index(request):
         {
             "paginator": paginator,
             "page": page,
-            "recipe": recipe,
         },
     )
 
@@ -214,9 +208,6 @@ def favorites(request):
 @login_required
 def shop_list(request):
     """Отображение страницы со списком покупок."""
-    if request.GET:
-        recipe_id = request.GET.get("recipe_id")
-        ShoppingList.objects.filter(recipe__id=recipe_id).delete()
     purchases = Recipe.objects.filter(shop_list__user=request.user)
     return render(
         request,
@@ -240,8 +231,8 @@ def change_favorites(request, recipe_id):
         )
 
         if not created:
-            return JsonResponse({"success": False})
-        return JsonResponse({"success": True})
+            return JSON_RESPONSE_FALSE
+        return JSON_RESPONSE_TRUE
 
     elif request.method == "DELETE":
         recipe = get_object_or_404(Recipe, pk=recipe_id)
@@ -251,8 +242,8 @@ def change_favorites(request, recipe_id):
         ).delete()
 
         if removed:
-            return JsonResponse({"success": True})
-        return JsonResponse({"success": False})
+            return JSON_RESPONSE_TRUE
+        return JSON_RESPONSE_FALSE
 
 
 @login_required
@@ -267,8 +258,8 @@ def purchases(request, recipe_id):
         )
 
         if not created:
-            return JsonResponse({"success": False})
-        return JsonResponse({"success": True})
+            return JSON_RESPONSE_FALSE
+        return JSON_RESPONSE_TRUE
 
     elif request.method == "DELETE":
         recipe = get_object_or_404(Recipe, pk=recipe_id)
@@ -277,25 +268,26 @@ def purchases(request, recipe_id):
         ).delete()
 
         if removed:
-            return JsonResponse({"success": True})
-        return JsonResponse({"success": False})
+            return JSON_RESPONSE_TRUE
+        return JSON_RESPONSE_FALSE
 
 
 @login_required
-def get_purchases(request):
+def download_purchases(request):
     """Скачать лист покупок."""
-    recipes = Recipe.objects.filter(shop_list__user=request.user)
+    recipes = Recipe.objects.filter(shop_list__user=request.user).annotate(
+        t=ArrayAgg("ingredient__title"),
+        d=ArrayAgg("ingredient__dimension"),
+        q=ArrayAgg("recipe_ingredients__quantity"),
+    )
 
     ing = {}
 
     for recipe in recipes:
-        ingredients = recipe.ingredient.values_list("title", "dimension")
-        amount = recipe.recipe_ingredients.values_list("quantity", flat=True)
-
-        for num in range(len(ingredients)):
-            title: str = ingredients[num][0]
-            dimension: str = ingredients[num][1]
-            quantity: int = amount[num]
+        for num in range(len(recipe.t)):
+            title = recipe.t[num]
+            dimension = recipe.d[num]
+            quantity = recipe.q[num]
 
             if title in ing.keys():
                 ing[title] = [ing[title][0] + quantity, dimension]
@@ -303,7 +295,7 @@ def get_purchases(request):
                 ing[title] = [quantity, dimension]
 
     response = HttpResponse(content_type="txt/csv")
-    response["Content-Disposition"] = 'attachment; filename="shop_list.doc"'
+    response["Content-Disposition"] = 'attachment; filename="shop_list.txt"'
     writer = csv.writer(response)
 
     for key, value in ing.items():

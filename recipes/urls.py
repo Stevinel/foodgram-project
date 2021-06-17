@@ -11,7 +11,7 @@ urlpatterns = [
     path("shop_list/", views.shop_list, name="shop_list"),
     path("favorites/", views.favorites, name="favorites"),
     path("ingredients/", views.ingredients, name="ingredients"),
-    path("purchases", views.get_purchases, name="get_purchases"),
+    path("purchases", views.download_purchases, name="download_purchases"),
     path("purchases/<int:recipe_id>", views.purchases, name="purchases"),
     path(
         "recipe/<int:recipe_id>/edit/", views.recipe_edit, name="recipe_edit"
@@ -31,7 +31,5 @@ urlpatterns = [
         views.subscriptions,
         name="subscriptions",
     ),
-    path(
-        "<str:username>/edit", views.profile_edit, name="profile_edit"
-    ),
+    path("<str:username>/edit", views.profile_edit, name="profile_edit"),
 ]

@@ -7,7 +7,13 @@
         {{ field|add_classes:"form__input" }}
         {% if form.errors %}
                 <span class="form__error">{{ form.non_field_errors }}</span>
-        {% endif %}          
+        {% endif %}
+        {% if field.label == 'Новый пароль' %}
+            <span class="form__input-info">* Ваш пароль не должен совпадать с вашим именем или другой персональной информацией или быть слишком похожим на неё.</span>
+            <span class="form__input-info">* Ваш пароль должен содержать как минимум 8 символов.</span>
+            <span class="form__input-info">* Ваш пароль не может быть одним из широко распространённых паролей.</span>
+            <span class="form__input-info">* Ваш пароль не может состоять только из цифр.</span>
+        {% endif %} 
     </div>
 </div>
 {% endfor %}

@@ -130,7 +130,7 @@ class ShoppingList(models.Model):
 
     def __str__(self):
         return f"user: {self.user.username}, recipe:{self.recipe.title}"
-        
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
@@ -157,4 +157,3 @@ class Follow(models.Model):
         return (
             f"follower: {self.user.username}, following:{self.author.username}"
         )
-

@@ -2,15 +2,16 @@
 {% block title %}Новый пароль{% endblock %}
 {% block static %}
 {% load static %}
-    <link rel="stylesheet" href="{% static 'pages/form.css' %}">
+<link rel="stylesheet" href="{% static 'pages/form.css' %}">
 {% endblock static %}
+{% block header%}
+{% include 'includes/header.html' %}
+{% endblock %}
 {% block content %}
-    {% include 'includes/header.html' %}
 {% load user_filters %}
 
 
 <main class="main container">
-
     <div class="main__header">
         <h1 class="main__title">Редактирование профиля</h1>
     </div>
@@ -27,7 +28,7 @@
                 </div>
             {% endfor %}
             <div class="form__footer">
-                <button class="button button_style_blue input type="submit" style="margin-left: 25%">Сохранить</button>
+                {% include 'includes/buttons/save_button.html' %}
             </div>
         </form>
     </div>

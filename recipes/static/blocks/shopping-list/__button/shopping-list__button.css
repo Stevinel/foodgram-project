@@ -5,4 +5,8 @@
     font-size: 14px;
     line-height: 17px;
     color: #858383;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
 }

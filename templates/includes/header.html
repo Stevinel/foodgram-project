@@ -1,9 +1,41 @@
+{% load user_filters %}
 <header class="header">
     {% block sidebar %}
         {% if user.is_authenticated  %}
-            {% include 'includes/nav_auth.html' %}
+            <nav class="nav">
+                <div class="nav__container container">
+                    <ul class="nav__items list">
+                        <li class="nav__item {% if index %} nav__item_active {% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
+                        <li class="nav__item {% if follow %} nav__item_active {% endif %}"><a href="{% url 'follow' %}" class="nav__link link">Мои подписки</a></li>
+                        <li class="nav__item {% if new_recipe %} nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
+                        <li class="nav__item {% if favorites %} nav__item_active {% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
+                        <li class="nav__item {% if shop_list %} nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
+                    </ul>
+                    <ul class="nav__items list">
+                        {% if user.is_authenticated %}
+                            <li class="nav__item {% if profile %} nav__item_active {% endif %}"><a href="{% url 'profile' user %}" class="nav__link link">{{ user }}</a></li>
+                        {% endif %}
+                        <li class="nav__item {% if password_change %} nav__item_active {% endif %}"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
+                        <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link link">Выход</a></li>
+                    </ul>
+                </div>
+            </nav>
         {% else %}
-            {% include 'includes/nav.html' %}
+            <nav class="nav">
+                <div class="nav__container container">
+                    <ul class="nav__items list">
+                        <li class="nav__item {% if index %} nav__item_active {% endif %}"><a href="{% url 'index' %}" class="nav__link link">Рецепты</a></li>
+                        <li class="nav__item {% if shop_list %} nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
+                    </ul>
+                
+                    <ul class="nav__items list">
+                        <li class="nav__item {% if login %} nav__item_active {% endif %}"><a href="{% url 'login' %}" class="nav__link link">Войти</a></li>
+                        <button type="button" class="button button_style_blue">
+                        <li class="nav__item"><a href="{% url 'signup' %}" class="nav__link link"><span style="color:rgb(255, 255, 255)">Создать аккаунт</a></span>
+                            </button>
+                    </ul>
+                </div>
+            </nav>
         {% endif %}
     {% endblock %}
 </header>
