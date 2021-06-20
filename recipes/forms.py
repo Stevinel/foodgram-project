@@ -12,5 +12,5 @@ class UserEditForm(forms.ModelForm):
 class RecipeCreateForm(forms.ModelForm):
     class Meta:
         model = Recipe
-        fields = ['title', 'tag', 'image', 'description', 'cooking_time']
-        widgets = {'tag': forms.CheckboxSelectMultiple()}
+        fields = ["title", "tag", "image", "description", "cooking_time"]
+        widgets = {"tag": forms.CheckboxSelectMultiple()}

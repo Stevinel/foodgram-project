@@ -1,6 +1,5 @@
 from django import template
 
-from foodgram.settings import ALLOWED_HOSTS
 from recipes.models import Favorite, Follow, ShoppingList
 
 register = template.Library()
@@ -47,7 +46,9 @@ def is_follower(request, profile):
 
 @register.filter(name="is_in_purchases")
 def is_in_purchases(request, recipe):
-    return ShoppingList.objects.filter(user=request.user, recipe=recipe).exists()
+    return ShoppingList.objects.filter(
+        user=request.user, recipe=recipe
+    ).exists()
 
 
 @register.filter

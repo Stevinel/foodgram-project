@@ -26,7 +26,7 @@
                 </div>
             </div>
             <ul class="single-card__items">
-                {% for tag in recipe.tag.all %}
+                {% for tag in recipe.tag.all|dictsort:'pk' %}
                     <li class="single-card__item"><span class="badge badge_style_{{ tag.color }}">{{ tag.title }}</span></li>
                 {% endfor %}
             </ul>

@@ -2,11 +2,12 @@ import csv
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
+from django.db.models.functions import Concat
+from django.db.models import F, Value
 
 from foodgram.settings import POSTS_PER_PAGE
 
@@ -269,32 +270,37 @@ def purchases(request, recipe_id):
 @login_required
 def download_purchases(request):
     """Скачать лист покупок."""
-    recipes = Recipe.objects.filter(shop_list__user=request.user).annotate(
-        t=ArrayAgg("ingredient__title"),
-        d=ArrayAgg("ingredient__dimension"),
-        q=ArrayAgg("recipe_ingredients__quantity"),
+    recipes = (
+        Recipe.objects.filter(shop_list__user=request.user)
+        .annotate(
+            name=Concat(
+                F("ingredient__title"),
+                Value(" ("),
+                F("ingredient__dimension"),
+                Value(")"),
+            ),
+            amount=F("recipe_ingredients__quantity"),
+        )
+        .values("name", "amount")
     )
 
     ing = {}
 
-    for recipe in recipes:
-        for num in range(len(recipe.t)):
-            title = recipe.t[num]
-            dimension = recipe.d[num]
-            quantity = recipe.q[num]
+    for recipe in list(recipes):
+        title = recipe["name"]
+        quantity = recipe["amount"]
 
-            if title in ing.keys():
-                ing[title] = [ing[title][0] + quantity, dimension]
-            else:
-                ing[title] = [quantity, dimension]
+        if title in ing.keys():
+            ing[title] = ing[title] + quantity
+        else:
+            ing[title] = quantity
 
     response = HttpResponse(content_type="txt/csv")
     response["Content-Disposition"] = 'attachment; filename="shop_list.txt"'
     writer = csv.writer(response)
 
     for key, value in ing.items():
-        writer.writerow([f"{key} ({value[1]}) - {value[0]}"])
-
+        writer.writerow([f"{key} - {value}"])
     return response
 
 
