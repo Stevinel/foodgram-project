@@ -11,25 +11,25 @@ urlpatterns = [
     path("shop_list/", views.shop_list, name="shop_list"),
     path("favorites/", views.favorites, name="favorites"),
     path("ingredients/", views.ingredients, name="ingredients"),
-    path("purchases", views.download_purchases, name="download_purchases"),
-    path("purchases/<int:recipe_id>", views.purchases, name="purchases"),
+    path("purchases/", views.download_purchases, name="download_purchases"),
+    path("purchases/<int:recipe_id>/", views.purchases, name="purchases"),
     path(
         "recipe/<int:recipe_id>/edit/", views.recipe_edit, name="recipe_edit"
     ),
     path(
-        "recipe/<str:username>/<int:recipe_id>/delete",
+        "recipe/<str:username>/<int:recipe_id>/delete/",
         views.recipe_delete,
         name="recipe_delete",
     ),
     path(
-        "change_favorites/<int:recipe_id>",
+        "change_favorites/<int:recipe_id>/",
         views.change_favorites,
         name="change_favorites",
     ),
     path(
-        "subscriptions/<int:author_id>",
+        "subscriptions/<int:author_id>/",
         views.subscriptions,
         name="subscriptions",
     ),
-    path("<str:username>/edit", views.profile_edit, name="profile_edit"),
+    path("<str:username>/edit/", views.profile_edit, name="profile_edit"),
 ]

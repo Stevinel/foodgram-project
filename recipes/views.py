@@ -79,10 +79,8 @@ def new_recipe(request):
     if form.is_valid():
         recipe = save_recipe(request, form)
         return redirect(to=recipe_view, recipe_id=recipe.id)
-    all_tags = Tag.objects.all()
     context = {
         "form": form,
-        "all_tags": all_tags,
     }
     return render(request, "new_recipe.html", context)
 
@@ -99,11 +97,7 @@ def recipe_edit(request, recipe_id):
     )
     if form.is_valid():
         recipe.ingredient.clear()
-        form.save()
-        ingredients = get_ingredients(request)
-        add_ingredients_to_recipe(ingredients, recipe)
-        tags_post = get_tags(request)
-        recipe.tag.set(tags_post)
+        recipe = save_recipe(request, form)
         return redirect(to=recipe_view, recipe_id=recipe_id)
 
     image_name = recipe.image.name.split("/")[1]

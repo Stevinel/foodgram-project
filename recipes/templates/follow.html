@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Мои подписки{% endblock %}
 {% block static %}
-{% load user_filters %}
+{% load filters %}
 {% load static %}
 {% endblock static %}
 {% block header %}
@@ -39,14 +39,15 @@
 
                     {% if subscription.recipes.count > 3 %}
                         <li class="card-user__item">
-                            <a href="{% url 'profile' subscription %}" class="card-user__link link">Ещё {{subscription.recipes.count|add:-3}} {{ subscription.recipes.count|add:-3|even }}...</a>
+                            <a href="{% url 'profile' subscription %}" class="card-user__link link">Ещё {{subscription.recipes.count|add:-3}} {{ subscription.recipes.count|declination }}...</a>
                         </li>
                     {% endif %}
             </ul>
         </div>
 
         <div class="card-user__footer">
-            {% if subscription in page %}
+            <!-- # эта кнопка есть на макете -->
+            {% if subscription in page %} 
                 <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
             {% endif %}
         </div>

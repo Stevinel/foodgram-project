@@ -1,5 +1,5 @@
 {% load thumbnail %}
-{% load user_filters %}
+{% load filters %}
 {% csrf_token %}
 <div class="card" data-id="{{ recipe.id }}"> 
     {% load thumbnail %}
@@ -22,19 +22,11 @@
     </div>
     <div class="card__footer">          
         {% if user.is_authenticated %}
-            {% if request|is_in_purchases:recipe %}
-                {% include 'includes/buttons/added_to_shop.html' %}
-            {% else %}
-                {% include 'includes/buttons/add_to_shop.html' %}
-            {% endif%}
-            
-            {% if request|is_favorite:recipe %}
-                {% include 'includes/buttons/added_to_favorites.html' %}
-            {% else %}
-                {% include 'includes/buttons/add_to_favorites.html' %}
-            {% endif %}
+            {% include 'includes/buttons/purchases_bttn.html' %}
+
+            {% include 'includes/buttons/favorites_bttn.html' %}
         {% else %}
-            {% include 'includes/buttons/add_to_shop_notauth.html' %}
+            <button class="button button_style_light-blue" onclick="location.href= '/auth/login/';"><span class="icon-plus button__icon"></span> Добавить в покупки</button></li>
         {% endif %}
     </div>    
  </div>

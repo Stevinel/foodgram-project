@@ -18,6 +18,7 @@ def get_ingredients(request):
 def get_tags_filter(request):
     tags_list = Tag.objects.values_list("value")
     tags_list_filter = request.GET.getlist("filters")
+    print(tags_list_filter)
     if tags_list_filter == []:
         tags_list_filter = tags_list
 
@@ -70,9 +71,5 @@ def save_recipe(request, form):
     recipe.save()
     ingredients = get_ingredients(request)
     add_ingredients_to_recipe(ingredients, recipe)
-    tags_post = get_tags(request)
-    for title in tags_post:
-        tag = get_object_or_404(Tag, title=title)
-        recipe.tag.add(tag)
     form.save_m2m()
     return recipe

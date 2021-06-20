@@ -20,12 +20,12 @@
             {% for recipe in purchases %}
                 <li class="shopping-list__item" data-id="{{recipe.id}}">
                     {% include 'includes/recipe_item.html' %}
-                    {% include 'includes/buttons/del_recipe_from_shop.html' %}
+                        <button class="shopping-list__button link">Удалить</button>
                 </li>
             {% endfor %}
         </ul>
         {% if purchases.exists %}
-            {% include 'includes/buttons/save_file.html' %}
+            <a href="{% url 'download_purchases' %}" class="button button_style_blue download">Скачать список</a>
         {% endif %}
     </div>
 </main>

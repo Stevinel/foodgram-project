@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Recipe, Tag, User
+from .models import Recipe, User
 
 
 class UserEditForm(forms.ModelForm):
@@ -12,22 +12,5 @@ class UserEditForm(forms.ModelForm):
 class RecipeCreateForm(forms.ModelForm):
     class Meta:
         model = Recipe
-        fields = (
-            "title",  # при добавлении полей теги и ингредиенты, перестаёт создавать и рекдактировать посты
-            "description",
-            "image",
-            "cooking_time",
-        )
-
-    tag = forms.ModelMultipleChoiceField(
-        Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False
-    )
-    ingredient = forms.CharField(max_length=250, required=False)
-    image = forms.ImageField(required=True)
-    cooking_time = forms.fields.IntegerField(
-        required=True,
-        min_value=1,
-        widget=forms.NumberInput(
-            attrs={"class": "form__input", "autocomplete": "off"}
-        ),
-    )
+        fields = ['title', 'tag', 'image', 'description', 'cooking_time']
+        widgets = {'tag': forms.CheckboxSelectMultiple()}

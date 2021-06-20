@@ -6,7 +6,7 @@
 {% block content %}
 {% load static %}
 {% csrf_token %}
-{% load user_filters %}
+{% load filters %}
 
 <link rel="stylesheet" href="{% static 'pages/single.css'%}">
 <main class="main container">
@@ -21,11 +21,7 @@
                 <h1 class="single-card__title"> {{ recipe.title }}</h1>
                 <div class="single-card__favorite">
                 {% if request.user.is_authenticated %}
-                    {% if request|is_favorite:recipe %}
-                        <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>
-                    {% else %}
-                        <button class="button button_style_none" name="favorites" data-out><span class="icon-favorite"></span></button>
-                    {% endif %}
+                    {% include 'includes/buttons/favorites_bttn.html' with recipe_page=True %}
                 {% endif %}
                 </div>
             </div>
@@ -48,24 +44,17 @@
                 </ul>
             </div>
             <ul class="single-card__items">
-                <li class="single-card__item">
+                <a class="single-card__item">
                 {% if user.is_authenticated %}
-                    {% if request|is_in_purchases:recipe %}
-                        {% include 'includes/buttons/added_to_shop.html' %}
-                    {% else %}
-                        {% include 'includes/buttons/add_to_shop.html' %}
-                    {% endif%}
+                    {% include 'includes/buttons/purchases_bttn.html' with recipe_page=True %}
+
                 {% else %}
-                    {% include 'includes/buttons/add_to_shop_notauth.html' %}
+                    <button class="button button_style_blue" onclick="location.href= '/auth/login/';"><span class="icon-plus button__icon"></span>Добавить в покупки</button></li>
                 {% endif %}
-                </li>
+                </a>
                 <li class="single-card__item">
                     {% if request.user.is_authenticated and request.user != recipe.author %}
-                        {% if not request|is_follower:author %}
-                            {% include 'includes/buttons/subscribe.html' %}
-                        {% else %}
-                            {% include 'includes/buttons/unsubscribe.html' %}
-                        {% endif %}
+                        {% include 'includes/buttons/follow_bttn.html' %}
                     {% endif %}
                 </li>
             </ul>

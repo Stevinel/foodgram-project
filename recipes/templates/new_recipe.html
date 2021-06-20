@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}{% if recipe == None %}Создание{% else %}Редактирование{% endif %} рецепта{% endblock %}
-{% load user_filters %}
+{% load filters %}
 {% block static %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'pages/form.css' %}">
@@ -30,19 +30,18 @@
                 <p class="form__label">Теги</p>                
                 <div class="form__field-group">
                     <div class="tags">
-                        {% for tag in all_tags %}
+                        {% for tag in form.fields.tag.choices.queryset.all %}
                             <div class="tags__item">
-                                {% if recipe == None %}
-                                <input type="checkbox" name="{{ tag.title }}" id="id_{{ tag.title }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
-                                <label for="id_{{ tag.title }}" class="tags__label">{{ tag.title }}</label>
-                                {% else %}
-                                <input type="checkbox" name="{{ tag.id }}" id="id_{{ tag.id }}" class="tags__checkbox tags__checkbox_style_{{ tag.color }}"{%if tag in recipe.tag.all %} checked {% endif %}>
+                                <input type="checkbox" name="tag" value="{{ tag.id }}"
+                                   {% if tag.id in form.tag.value %} checked {% endif %}
+                                   id="id_{{ tag.id }}"  class="tags__checkbox tags__checkbox_style_{{ tag.color }}">
                                 <label for="id_{{ tag.id }}" class="tags__label">{{ tag.title }}</label>
-                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
-                    <span class="form__error">{{ form.tags.errors }}</span>
+                    {% for error in form.tag.errors %}
+                        <span class="form__error">{{ errors }}</span>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -51,11 +50,11 @@
             <div class="form__field-group">
                 <div class="form__field-group-ingredientes">
                     <div class="form__dropdown">
-                        <input type="text" id="nameIngredient" class="form__input" required>
+                        <input type="text" id="nameIngredient" class="form__input">
                         <div class="form__dropdown-items"></div>
                     </div>
 
-                    <input type="number" id="cantidad" class="form__input" min="0" required>
+                    <input type="number" id="cantidad" class="form__input" min="0">
                     <label for="cantidad" class="form__label" id="cantidadVal">шт.</label>
                 </div>
                 <div class="form__field-group-ingredientes-container">
@@ -114,9 +113,9 @@
         </div>
         <div class="form__footer">
             {% if recipe == None %}
-                {% include 'includes/buttons/create_recipe.html' %}
+                <button class="button button_style_blue">Создать рецепт</button>
             {% else %}
-                {% include 'includes/buttons/save_button.html' %}
+                <button class="button button_style_blue input type="submit" style="margin-left: 25%">Сохранить</button>
                 <a style="margin-left: 2.5em" href="{% url 'recipe_delete' recipe.author.username recipe.id %}" class="form__ingredient-link">Удалить</a>
             {% endif %}
         </div>

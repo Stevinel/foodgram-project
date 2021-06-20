@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Новый пароль{% endblock %}
+{% block title %}Редактировать профиль{% endblock %}
 {% block static %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'pages/form.css' %}">
@@ -8,7 +8,7 @@
 {% include 'includes/header.html' %}
 {% endblock %}
 {% block content %}
-{% load user_filters %}
+{% load filters %}
 
 
 <main class="main container">
@@ -28,7 +28,7 @@
                 </div>
             {% endfor %}
             <div class="form__footer">
-                {% include 'includes/buttons/save_button.html' %}
+                <button class="button button_style_blue input type="submit" style="margin-left: 25%">Сохранить</button>
             </div>
         </form>
     </div>

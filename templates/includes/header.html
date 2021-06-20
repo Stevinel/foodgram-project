@@ -1,4 +1,4 @@
-{% load user_filters %}
+{% load filters %}
 <header class="header">
     {% block sidebar %}
         {% if user.is_authenticated  %}
@@ -9,7 +9,7 @@
                         <li class="nav__item {% if follow %} nav__item_active {% endif %}"><a href="{% url 'follow' %}" class="nav__link link">Мои подписки</a></li>
                         <li class="nav__item {% if new_recipe %} nav__item_active {% endif %}"><a href="{% url 'new_recipe' %}" class="nav__link link">Создать рецепт</a></li>
                         <li class="nav__item {% if favorites %} nav__item_active {% endif %}"><a href="{% url 'favorites' %}" class="nav__link link">Избранное</a></li>
-                        <li class="nav__item {% if shop_list %} nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{{ shop_list_count }}</span></li>
+                        <li class="nav__item {% if shop_list %} nav__item_active {% endif %}"><a href="{% url 'shop_list' %}" class="nav__link link">Список покупок</a> <span class="badge badge_style_blue nav__badge" id="counter">{% if request.user.user_shopping_lists.count > 0 %}{{ request.user.user_shopping_lists.count }}{% endif %}</span></li>
                     </ul>
                     <ul class="nav__items list">
                         {% if user.is_authenticated %}
