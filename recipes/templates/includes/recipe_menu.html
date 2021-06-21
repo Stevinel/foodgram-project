@@ -11,7 +11,7 @@
         <ul class="card__items"> 
             {% for tag in recipe.tag.all|dictsort:'pk' %}
             <li class="single-card__item">
-                <span class="badge badge_style_{{ tag.color }}">{{ tag.title }}</span>
+                <span class="badge badge_style_{{ tag.color }}">{{ tag.title }}</span>&thinsp;&thinsp;
             </li>             
             {% endfor %}
         </ul>
@@ -21,12 +21,7 @@
         </div>
     </div>
     <div class="card__footer">          
-        {% if user.is_authenticated %}
-            {% include 'includes/buttons/purchases_bttn.html' %}
-
-            {% include 'includes/buttons/favorites_bttn.html' %}
-        {% else %}
-            <button class="button button_style_light-blue" onclick="location.href= '/auth/login/';"><span class="icon-plus button__icon"></span> Добавить в покупки</button></li>
-        {% endif %}
+        {% include 'includes/buttons/purchases_bttn.html' %}
+        {% include 'includes/buttons/favorites_bttn.html' %}
     </div>    
  </div>

@@ -3,11 +3,10 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
-from django.db.models.functions import Concat
-from django.db.models import F, Value
 
 from foodgram.settings import POSTS_PER_PAGE
 
@@ -21,7 +20,7 @@ JSON_RESPONSE_TRUE = JsonResponse({"success": True})
 
 def index(request):
     """Главная страница"""
-    tags_list_filter, recipe_list, all_tags = get_tags_filter(request)
+    active_tags, recipe_list, all_tags = get_tags_filter(request)
     paginator = Paginator(recipe_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
@@ -31,7 +30,7 @@ def index(request):
         {
             "paginator": paginator,
             "page": page,
-            "all_tags": all_tags,
+            "active_tags": active_tags,
         },
     )
 
@@ -39,14 +38,15 @@ def index(request):
 def recipe_view(request, recipe_id):
     """Страница отдельного рецепта"""
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    context = {"recipe": recipe}
+    author = recipe.author
+    context = {"recipe": recipe, "author": author}
     return render(request, "recipe.html", context)
 
 
 def profile(request, username):
     """Профиль пользователя"""
     author = get_object_or_404(User, username=username)
-    tags_list_filter, recipe_list, all_tags = get_tags_filter(request)
+    active_tags, recipe_list, all_tags = get_tags_filter(request)
     recipe_list = recipe_list.filter(author=author.id)
     paginator = Paginator(recipe_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
@@ -54,7 +54,7 @@ def profile(request, username):
     context = {
         "page": page,
         "paginator": paginator,
-        "all_tags": all_tags,
+        "active_tags": active_tags,
         "author": author,
     }
     return render(request, "profile.html", context)
@@ -147,12 +147,13 @@ def subscriptions(request, author_id):
         author_id = json.loads(request.body).get("id")
         author = get_object_or_404(User, id=author_id)
 
-        obj, created = Follow.objects.get_or_create(
-            user=request.user, author=author
-        )
-
-        if request.user == author or not created:
+        if (
+            author == request.user
+            or Follow.objects.filter(author=author, user=request.user).exists()
+        ):
             return JSON_RESPONSE_FALSE
+
+        Follow.objects.get_or_create(user=request.user, author=author)
         return JSON_RESPONSE_TRUE
 
     elif request.method == "DELETE":
@@ -183,14 +184,17 @@ def delete_subscription(request, author_id):
 @login_required
 def favorites(request):
     """Страница мои избранные"""
-    tags_list_filter, recipe_list, all_tags = get_tags_filter(request)
+    active_tags, recipe_list, all_tags = get_tags_filter(request)
+    recipe_list = Recipe.objects.filter(
+        in_user_favorites__user=request.user
+    ).distinct()
     paginator = Paginator(recipe_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
         "paginator": paginator,
         "page": page,
-        "all_tags": all_tags,
+        "active_tags": active_tags,
     }
     return render(request, "favorites.html", context)
 
@@ -267,35 +271,22 @@ def download_purchases(request):
     """Скачать лист покупок."""
     recipes = (
         Recipe.objects.filter(shop_list__user=request.user)
-        .annotate(
-            name=Concat(
-                F("ingredient__title"),
-                Value(" ("),
-                F("ingredient__dimension"),
-                Value(")"),
-            ),
-            amount=F("recipe_ingredients__quantity"),
-        )
-        .values("name", "amount")
+        .order_by("ingredient__title")
+        .values("ingredient__title", "ingredient__dimension")
+        .annotate(total_quantity=Sum("recipe_ingredients__quantity"))
     )
-
-    ing = {}
-
-    for recipe in list(recipes):
-        title = recipe["name"]
-        quantity = recipe["amount"]
-
-        if title in ing.keys():
-            ing[title] = ing[title] + quantity
-        else:
-            ing[title] = quantity
 
     response = HttpResponse(content_type="txt/csv")
     response["Content-Disposition"] = 'attachment; filename="shop_list.txt"'
     writer = csv.writer(response)
 
-    for key, value in ing.items():
-        writer.writerow([f"{key} - {value}"])
+    for recipe in recipes:
+        print(recipe)
+        writer.writerow(
+            [
+                f"{recipe['ingredient__title']} - {recipe['total_quantity']} {recipe['ingredient__dimension']}"
+            ]
+        )
     return response
 
 

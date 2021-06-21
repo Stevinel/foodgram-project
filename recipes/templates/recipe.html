@@ -20,9 +20,7 @@
             <div class="single-card__header-info">
                 <h1 class="single-card__title"> {{ recipe.title }}</h1>
                 <div class="single-card__favorite">
-                {% if request.user.is_authenticated %}
                     {% include 'includes/buttons/favorites_bttn.html' with recipe_page=True %}
-                {% endif %}
                 </div>
             </div>
             <ul class="single-card__items">
@@ -45,17 +43,10 @@
             </div>
             <ul class="single-card__items">
                 <a class="single-card__item">
-                {% if user.is_authenticated %}
                     {% include 'includes/buttons/purchases_bttn.html' with recipe_page=True %}
-
-                {% else %}
-                    <button class="button button_style_blue" onclick="location.href= '/auth/login/';"><span class="icon-plus button__icon"></span>Добавить в покупки</button></li>
-                {% endif %}
                 </a>
                 <li class="single-card__item">
-                    {% if request.user.is_authenticated and request.user != recipe.author %}
-                        {% include 'includes/buttons/follow_bttn.html' %}
-                    {% endif %}
+                    {% include 'includes/buttons/follow_bttn.html' %}
                 </li>
             </ul>
             <div class="single-card__section">

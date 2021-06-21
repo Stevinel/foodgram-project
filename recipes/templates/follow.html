@@ -46,10 +46,7 @@
         </div>
 
         <div class="card-user__footer">
-            <!-- # эта кнопка есть на макете -->
-            {% if subscription in page %} 
                 <button class="button button_style_light-blue button_size_auto" name="subscribe">Отписаться</button>
-            {% endif %}
         </div>
     {% endfor %}
     {% if page.has_other_pages %}

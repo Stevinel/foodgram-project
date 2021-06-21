@@ -1,7 +1,9 @@
 {% load filters %}
 
-{% if not request|is_follower:author %}
-    <p style="padding: 0 0 2em 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
-{% else %}
-    <p style="padding: 0 0 2em 0;margin-top: 0;"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Отписаться от автора</button></p>
+{% if request.user.is_authenticated and request.user != author %} 
+    {% if not request|is_follower:author %}
+        <p class="button__padding button__nomargin"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
+    {% else %}
+        <p class="button__padding button__nomargin"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Отписаться от автора</button></p>
+    {% endif %}
 {% endif %}

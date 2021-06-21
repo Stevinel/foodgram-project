@@ -16,28 +16,46 @@ def get_ingredients(request):
 
 
 def get_tags_filter(request):
-    tags_list = Tag.objects.values_list("value")
-    tags_list_filter = request.GET.getlist("filters")
-    if tags_list_filter == []:
-        tags_list_filter = tags_list
+    all_tags = Tag.objects.all()
+    request_tags = request.GET.getlist("filters")
+
+    if not request_tags:
+        for tag in all_tags:
+            request_tags.append(tag.value)
+
+    active_tags = {}
+    for tag in all_tags:
+        if tag.value in request_tags:
+            active_tags[tag.value] = {
+                "status": True,
+                "title": tag.title,
+                "color": tag.color,
+            }
+        else:
+            active_tags[tag.value] = {
+                "status": False,
+                "title": tag.title,
+                "color": tag.color,
+            }
 
     recipe_list = (
-        Recipe.objects.filter(tag__value__in=tags_list_filter)
+        Recipe.objects.filter(tag__value__in=request_tags)
         .select_related("author")
         .prefetch_related("tag")
         .distinct()
     )
+    return (
+        active_tags,
+        recipe_list,
+        all_tags,
+    )
 
+
+def get_tags():
     all_tags = Tag.objects.all()
-
-    return tags_list_filter, recipe_list, all_tags
-
-
-def get_tags(request):
     tags_list = []
-    for field, value in request.POST.items():
-        if value == "on":
-            tags_list.append(field)
+    for tag in all_tags:
+        tags_list.append(tag.value)
     return tags_list
 
 

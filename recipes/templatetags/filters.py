@@ -1,8 +1,11 @@
 from django import template
 
 from recipes.models import Favorite, Follow, ShoppingList
+from recipes.utilities import get_tags
 
 register = template.Library()
+
+RECIPES = ["рецепт", "рецепта", "рецептов"]
 
 
 @register.filter()
@@ -10,20 +13,18 @@ def add_classes(field, css):
     return field.as_widget(attrs={"class": css})
 
 
-@register.filter(name="get_filter_values")
-def get_filter_values(value):
-    return value.getlist("filters")
-
-
-@register.filter(name="get_filter_link")
+@register.filter()
 def get_filter_values(request, tag):
     new_request = request.GET.copy()
-    if tag.value in request.GET.getlist("filters"):
-        filters = new_request.getlist("filters")
-        filters.remove(tag.value)
-        new_request.setlist("filters", filters)
+    if not request.GET.getlist("filters"):
+        tags_list = get_tags()
     else:
-        new_request.appendlist("filters", tag.value)
+        tags_list = new_request.getlist("filters")
+    if tag in tags_list:
+        tags_list.remove(tag)
+        new_request.setlist("filters", tags_list)
+    else:
+        new_request.appendlist("filters", tag)
     return new_request.urlencode()
 
 
@@ -55,13 +56,13 @@ def is_in_purchases(request, recipe):
 def declination(num):
     num -= 3
     if (num % 10 == 1) and (num % 100 != 11):
-        word_out = "рецепт"
+        word_out = RECIPES[0]
     elif (
         (num % 10 >= 2)
         and (num % 10 <= 4)
         and (num % 100 < 10 or num % 100 >= 20)
     ):
-        word_out = "рецепта"
+        word_out = RECIPES[1]
     else:
-        word_out = "рецептов"
+        word_out = RECIPES[2]
     return word_out
