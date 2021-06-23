@@ -148,9 +148,7 @@ def subscriptions(request, author_id):
         author = get_object_or_404(User, id=author_id)
 
         if (
-            author == request.user
-            or Follow.objects.filter(author=author, user=request.user).exists()
-        ):
+            author == request.user):
             return JSON_RESPONSE_FALSE
 
         Follow.objects.get_or_create(user=request.user, author=author)
@@ -281,10 +279,10 @@ def download_purchases(request):
     writer = csv.writer(response)
 
     for recipe in recipes:
-        print(recipe)
         writer.writerow(
             [
-                f"{recipe['ingredient__title']} - {recipe['total_quantity']} {recipe['ingredient__dimension']}"
+                f"{recipe['ingredient__title']} - {recipe['total_quantity']}"
+                f"{recipe['ingredient__dimension']}"
             ]
         )
     return response

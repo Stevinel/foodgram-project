@@ -20,7 +20,7 @@
                 {% endif %}
             </h1>
             <ul class="tags">
-                {% include 'includes/tags.html' %}
+                {% include 'includes/tags.html' with active_tags=active_tags %}
             </ul>
         </div>
             <div class="author-subscribe" data-author="{{ author.id }}">
