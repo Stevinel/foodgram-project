@@ -1,5 +1,4 @@
 import os
-
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -42,8 +41,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "foodgram.urls"
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-REGISTRATION_DIR = os.path.join(BASE_DIR, 'users/templates/registration/')
-INCLUDE_DIR = os.path.join(BASE_DIR, 'templates', 'include')
+REGISTRATION_DIR = os.path.join(BASE_DIR, "users/templates/registration/")
+INCLUDE_DIR = os.path.join(BASE_DIR, "templates", "include")
 
 TEMPLATES = [
     {
@@ -76,9 +75,9 @@ DATABASES = {
 }
 
 DATABASES_DEV = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 if DEBUG:
