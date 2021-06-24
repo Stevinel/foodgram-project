@@ -74,17 +74,6 @@ DATABASES = {
     }
 }
 
-DATABASES_DEV = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-if DEBUG:
-    DATABASES = DATABASES_DEV
-else:
-    DATABASES = DATABASES
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
