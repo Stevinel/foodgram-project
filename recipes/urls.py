@@ -1,6 +1,6 @@
 from django.urls import path
 
-from recipes import views
+from recipes import utilities, views
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -10,7 +10,7 @@ urlpatterns = [
     path("follow/", views.follow_index, name="follow"),
     path("shop_list/", views.shop_list, name="shop_list"),
     path("favorites/", views.favorites, name="favorites"),
-    path("ingredients/", views.ingredients, name="ingredients"),
+    path("ingredients/", utilities.ingredients, name="ingredients"),
     path("purchases/", views.download_purchases, name="download_purchases"),
     path("purchases/<int:recipe_id>/", views.purchases, name="purchases"),
     path(
