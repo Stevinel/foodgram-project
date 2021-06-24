@@ -12,7 +12,7 @@ from foodgram.settings import POSTS_PER_PAGE
 
 from .forms import RecipeCreateForm, UserEditForm
 from .models import Favorite, Follow, Recipe, ShoppingList, Tag, User
-from .utilities import *
+from .utilities import get_tags_filter, save_recipe
 
 JSON_RESPONSE_FALSE = JsonResponse({"success": False})
 JSON_RESPONSE_TRUE = JsonResponse({"success": True})
@@ -147,8 +147,7 @@ def subscriptions(request, author_id):
         author_id = json.loads(request.body).get("id")
         author = get_object_or_404(User, id=author_id)
 
-        if (
-            author == request.user):
+        if author == request.user:
             return JSON_RESPONSE_FALSE
 
         Follow.objects.get_or_create(user=request.user, author=author)
