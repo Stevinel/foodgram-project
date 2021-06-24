@@ -1,2 +1,2 @@
 # FOODGRAM
-![foodgram](https://github.com/Stevinel/foodgram/workflows/foodgram/badge.svg)
+![foodgram](https://github.com/stevinel/foodgram-project/workflows/foodgram/badge.svg)
