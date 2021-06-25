@@ -50,7 +50,7 @@
         </div>
     </div>
     {% endfor %}
-    {% if page.has_other_pages %}
+    {% if page.paginator.count  > 6 %}
         {% include "includes/paginator.html"%}
     {% endif %}
 </main>
