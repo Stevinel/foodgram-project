@@ -50,8 +50,8 @@
         </div>
     </div>
     {% endfor %}
-    {% if page.paginator.count  > 6 %}
-        {% include "includes/paginator.html" with page=page paginator=paginator%}
+    {% if page.has_other_pages %}
+        {% include 'includes/paginator.html' with items=page paginator=paginator %}
     {% endif %}
 </main>
 <script src="{% static 'js/config/config.js' %}"></script>

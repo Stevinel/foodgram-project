@@ -126,7 +126,7 @@ def recipe_delete(request, username, recipe_id):
 def follow_index(request):
     """Страница подписок"""
     subscriptions = User.objects.filter(following__user=request.user)
-    paginator = Paginator(subscriptions, 3)
+    paginator = Paginator(subscriptions, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     return render(
