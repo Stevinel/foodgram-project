@@ -111,4 +111,10 @@ formDropdownItems.addEventListener('click', ingredients.dropdown);
 // вешаем слушатель на кнопку
 addIng.addEventListener('click', ingredients.addIngredient);
 
-
+document.querySelector('.form__footer .button').onclick = function(e) {
+    const ings = document.querySelector('.form__field-item-ingredient');
+    if (!ings) {
+        e.preventDefault();
+        document.querySelector('.error__hidden').classList.toggle('error__hidden');
+    }
+}

@@ -65,7 +65,11 @@
 @import "../blocks/recipe/__image/recipe__image.css";
 @import "../blocks/recipe/__text/recipe__text.css";
 
-
+@import "../blocks/icon-time/icon-time.css";
+@import "../blocks/icon-user/icon-user.css";
+@import "../blocks/icon-plus/icon-plus.css";
+@import "../blocks/icon-left/icon-left.css";
+@import "../blocks/icon-right/icon-right.css";
 
 @import "../blocks/badge/badge.css";
 @import "../blocks/badge/_style/badge_style_blue.css";

@@ -22,7 +22,7 @@
                 <div class="form__field-group">
                     {{ form.title|add_classes:"form__input" }}
                     {% for error in form.title.errors %}
-                        <span class="form__error">{{ error }}</span>
+                        <span class="form__error">{{ form.title.errors }}</span>
                     {% endfor %}
                 </div>
             </div>
@@ -32,7 +32,7 @@
                     <div class="form__field-group">
                         <div class="tags">
                             {% for tag in form.fields.tag.choices.queryset.all %}
-                                <div class="tags__item">
+                                <div class="tags__item" required>
                                     <input type="checkbox" name="tag" value="{{ tag.id }}"
                                     {% if tag.id in form.tag.value %} checked {% endif %}
                                     id="id_{{ tag.id }}"  class="tags__checkbox tags__checkbox_style_{{ tag.color }}">
@@ -41,7 +41,7 @@
                             {% endfor %}
                         </div>
                         {% for error in form.tag.errors %}
-                            <span class="form__error">{{ errors }}</span>
+                            <span class="form__error">{{ form.tag.errors }}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -70,9 +70,8 @@
                         {% endfor %}
                     </div>
                     <span class="form__ingredient-link" id="addIng">Добавить ингредиент</span>
-                    {% for error in form.ingredients.errors %}
-                        <span class="form__error">{{ error }}</span>
-                    {% endfor %}
+                    
+                    <span class="form__error error__hidden">Добавьте ингредиенты</span>
                 </div>
             </div>
             <div class="form__group">
@@ -108,7 +107,7 @@
 
                     <div class="form__filename"></div>
                     {% for error in form.image.errors %}
-                        <span class="form__error">{{ error }}</span>
+                        <span class="form__error">{{ form.image.errors }}</span>
                     {% endfor %}
                 </div>
             </div>

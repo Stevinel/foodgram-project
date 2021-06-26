@@ -4,6 +4,6 @@
     {% if not request|is_follower:author %}
         <p class="button__padding button__nomargin"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></p>
     {% else %}
-        <p class="button__padding button__nomargin"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Отписаться от автора</button></p>
+        <p class="button__padding button__nomargin"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></p>
     {% endif %}
 {% endif %}
