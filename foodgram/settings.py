@@ -12,7 +12,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["178.154.214.113", "*"]
+ALLOWED_HOSTS = ["178.154.214.113", "*", "www.foodgram-2021.tk", "foodgram-2021.tk"]
 
 
 INSTALLED_APPS = [
