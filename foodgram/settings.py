@@ -41,8 +41,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "foodgram.urls"
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-REGISTRATION_DIR = os.path.join(BASE_DIR, 'templates',
-                                '../users/templates/registration')
+REGISTRATION_DIR = os.path.join(BASE_DIR, "users/templates/registration/")
 INCLUDE_DIR = os.path.join(BASE_DIR, "templates", "include")
 
 TEMPLATES = [
