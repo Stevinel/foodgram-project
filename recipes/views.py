@@ -181,9 +181,10 @@ def delete_subscription(request, author_id):
 @login_required
 def favorites(request):
     """Страница мои избранные"""
-    active_tags, recipe_list, all_tags = get_tags_filter(request)
+    active_tags, _, all_tags = get_tags_filter(request)
+    request_tags = request.GET.getlist("filters")
     recipe_list = Recipe.objects.filter(
-        in_user_favorites__user=request.user
+        in_user_favorites__user=request.user, tag__value__in=request_tags
     ).distinct()
     paginator = Paginator(recipe_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
