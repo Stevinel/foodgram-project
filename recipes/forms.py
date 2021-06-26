@@ -1,7 +1,6 @@
 from django import forms
-from django.forms.fields import CharField
 
-from .models import Ingredient, Recipe, Tag, User
+from .models import Recipe, Tag, User
 
 
 class UserEditForm(forms.ModelForm):
