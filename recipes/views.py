@@ -90,7 +90,7 @@ def new_recipe(request):
 def recipe_edit(request, recipe_id):
     """Редактировать рецепт."""
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    if request.user != recipe.author and not request.user.is_staff:
+    if request.user != recipe.author and not request.user.is_superuser:
         return redirect(to=recipe_view, recipe_id=recipe_id)
 
     form = RecipeCreateForm(
@@ -116,7 +116,7 @@ def recipe_edit(request, recipe_id):
 def recipe_delete(request, username, recipe_id):
     """Удаление рецепта"""
     recipe = get_object_or_404(Recipe, pk=recipe_id)
-    if request.user != recipe.author:
+    if request.user != recipe.author and not request.user.is_superuser:
         return redirect("recipe", username=username, recipe_id=recipe_id)
     recipe.delete()
     return redirect("profile", username=username)

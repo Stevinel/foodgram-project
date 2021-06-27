@@ -37,6 +37,7 @@ def get_tags_filter(request):
                 "title": tag.title,
                 "color": tag.color,
             }
+            print(active_tags)
 
     recipe_list = (
         Recipe.objects.filter(tag__value__in=request_tags)

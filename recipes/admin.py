@@ -33,3 +33,18 @@ class TagAdmin(admin.ModelAdmin):
 class FollowAdmin(admin.ModelAdmin):
     list_display = ("user", "author")
     empty_value_display = "-пусто-"
+
+
+@admin.register(IngredientItem)
+class IngredientItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "recipe",
+        "ingredient",
+        "quantity",
+    )
+    list_display_links = ("pk", "recipe")
+    list_filter = (
+        "recipe",
+        "ingredient",
+    )

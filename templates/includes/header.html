@@ -13,7 +13,7 @@
                     </ul>
                     <ul class="nav__items list">
                         {% if user.is_authenticated %}
-                            <li class="nav__item {% if profile %} nav__item_active {% endif %}"><a href="{% url 'profile' user %}" class="nav__link link">{{ user }}</a></li>
+                            <li class="nav__item {% if profile == request.user %} nav__item_active {% endif %}"><a href="{% url 'profile' user %}" class="nav__link link">{{ user }}</a></li>
                         {% endif %}
                         <li class="nav__item {% if password_change %} nav__item_active {% endif %}"><a href="{% url 'password_change' %}" class="nav__link link">Изменить пароль</a></li>
                         <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link link">Выход</a></li>

@@ -109,6 +109,10 @@ class IngredientItem(models.Model):
         validators=(MinValueValidator(1),)
     )
 
+    class Meta:
+        verbose_name = "Ингредиент итем"
+        verbose_name_plural = "Ингредиент итемы"
+
     def __str__(self):
         return self.ingredient.title
 
