@@ -1,7 +1,6 @@
 from django import template
 
 from recipes.models import Favorite, Follow, ShoppingList
-from recipes.utilities import get_tags
 
 register = template.Library()
 
@@ -16,10 +15,9 @@ def add_classes(field, css):
 @register.filter()
 def get_filter_values(request, tag):
     new_request = request.GET.copy()
-    if not request.GET.getlist("filters"):
-        tags_list = get_tags()
-    else:
-        tags_list = new_request.getlist("filters")
+
+    tags_list = request.GET.getlist("filters")
+
     if tag in tags_list:
         tags_list.remove(tag)
         new_request.setlist("filters", tags_list)

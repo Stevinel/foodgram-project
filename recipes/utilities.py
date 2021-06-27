@@ -19,10 +19,6 @@ def get_tags_filter(request):
     all_tags = Tag.objects.all()
     request_tags = request.GET.getlist("filters")
 
-    if not request_tags:
-        for tag in all_tags:
-            request_tags.append(tag.value)
-
     active_tags = {}
     for tag in all_tags:
         if tag.value in request_tags:
@@ -37,7 +33,10 @@ def get_tags_filter(request):
                 "title": tag.title,
                 "color": tag.color,
             }
-            print(active_tags)
+
+    if not request_tags:
+        for tag in all_tags:
+            request_tags.append(tag.value)
 
     recipe_list = (
         Recipe.objects.filter(tag__value__in=request_tags)
