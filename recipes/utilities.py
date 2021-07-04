@@ -84,7 +84,8 @@ def add_ingredients_to_recipe(ingredients, recipe):
 def save_recipe(request, form):
     """Сохранить форму"""
     recipe = form.save(commit=False)
-    recipe.author = request.user
+    if recipe.author == request.user:
+        recipe.author = request.user
     recipe.save()
     ingredients = get_ingredients(request)
     add_ingredients_to_recipe(ingredients, recipe)
