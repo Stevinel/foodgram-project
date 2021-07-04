@@ -60,10 +60,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram:latest
             sudo docker-compose stop
             sudo docker-compose rm -f web
-            touch .env
-            echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
-            echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
             sudo docker-compose up -d
 
   send_message:
